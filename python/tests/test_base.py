@@ -26,12 +26,12 @@ def test_str_file_conversions(tmp_path):
 
 
 def test_shape_conversions():
-    shape = [1, 9, 10, 1]
+    shape = (1, 9, 10, 1)
     assert shape == base.bytes_to_shape(base.shape_to_bytes(shape))
 
 
 def test_shape_file(tmp_path):
-    shape = [1, 4, 5]
+    shape = (1, 4, 5)
     file = tmp_path / 'shape'
     base.shape_to_file(shape, file)
     assert shape == base.file_to_shape(file)

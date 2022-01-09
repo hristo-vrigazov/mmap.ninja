@@ -28,13 +28,12 @@ class StringsMmmap:
         return bytes_to_str(self.buffer[start:end])
 
     def __getitem__(self, item):
-        try:
-            return self.get_multiple(item)
-        except TypeError:
+        if np.isscalar(item):
             return self.get_single(item)
+        return self.get_multiple(item)
 
     def set_multiple(self, key, value):
-        for i, idx in enumerate(key):
+        for i, idx in enumerate(self.range[key]):
             new_value: str = value[i]
             self.set_single(idx, new_value)
 
@@ -44,10 +43,9 @@ class StringsMmmap:
         self.buffer[start:end] = str_to_bytes(new_value)
 
     def __setitem__(self, key, value):
-        try:
-            return self.set_multiple(key, value)
-        except TypeError:
+        if np.isscalar(key):
             return self.set_single(key, value)
+        return self.set_multiple(key, value)
 
     def close(self):
         self.buffer.close()
