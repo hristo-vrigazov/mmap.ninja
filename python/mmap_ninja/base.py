@@ -51,7 +51,7 @@ def bytes_to_shape(inp: bytes, step=4) -> Sequence[int]:
     for start in range(0, len(inp) - 1, step):
         end = start + step
         res.append(bytes_to_int(inp[start:end]))
-    return res
+    return tuple(res)
 
 
 def shape_to_file(shape: Sequence[int], file: Union[str, Path]):
@@ -62,3 +62,15 @@ def shape_to_file(shape: Sequence[int], file: Union[str, Path]):
 def file_to_shape(file: Union[str, Path]) -> Sequence[int]:
     with open(file, 'rb') as out_file:
         return bytes_to_shape(out_file.read())
+
+
+def sequence_of_strings_to_bytes(strings):
+    buffer = bytearray()
+    starts = []
+    ends = []
+    for string in strings:
+        arr = str_to_bytes(string)
+        starts.append(len(buffer))
+        ends.append(len(buffer) + len(arr))
+        buffer.extend(arr)
+    return bytes(buffer), ends, starts

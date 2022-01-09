@@ -26,7 +26,7 @@ def read_mmap_kwargs(out_dir: Path):
     }
 
 
-class NumpyMemmap:
+class NumpyMmap:
 
     def __init__(self, memmap, dtype, shape, order):
         self.memmap = memmap
@@ -59,6 +59,7 @@ class NumpyMemmap:
                            shape=shape,
                            order=order)
         memmap[:] = arr
+        save_mmap_kwargs(out_dir, dtype, shape, order)
         return cls(memmap, dtype, shape, order)
 
     @classmethod
