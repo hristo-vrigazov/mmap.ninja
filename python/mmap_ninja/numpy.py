@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Union
 from mmap_ninja import base
 
-
 # See: https://numpy.org/doc/stable/reference/generated/numpy.memmap.html
 import numpy as np
 
@@ -26,48 +25,38 @@ def read_mmap_kwargs(out_dir: Path):
     }
 
 
-class NumpyMmap:
+def empty(out_dir: Union[str, Path], dtype, shape, order):
+    out_dir = Path(out_dir)
+    out_dir.mkdir(exist_ok=True)
+    save_mmap_kwargs(out_dir, dtype, shape, order)
+    memmap = np.memmap(str(out_dir / 'data.ninja'),
+                       mode='w+',
+                       dtype=dtype,
+                       shape=shape,
+                       order=order)
+    return memmap
 
-    def __init__(self, memmap, dtype, shape, order):
-        self.memmap = memmap
-        self.dtype = dtype
-        self.order = order
-        self.shape = shape
 
-    @classmethod
-    def empty(cls, out_dir: Union[str, Path], dtype, shape, order):
-        out_dir = Path(out_dir)
-        out_dir.mkdir(exist_ok=True)
-        save_mmap_kwargs(out_dir, dtype, shape, order)
-        memmap = np.memmap(str(out_dir / 'data.ninja'),
-                           mode='w+',
-                           dtype=dtype,
-                           shape=shape,
-                           order=order)
-        return cls(memmap, dtype, shape, order)
+def from_ndarray(arr: np.ndarray, out_dir: Union[str, Path]):
+    out_dir = Path(out_dir)
+    out_dir.mkdir(exist_ok=True)
+    dtype = arr.dtype
+    shape = arr.shape
+    order = 'F' if np.isfortran(arr) else 'C'
+    memmap = np.memmap(str(out_dir / 'data.ninja'),
+                       mode='w+',
+                       dtype=dtype,
+                       shape=shape,
+                       order=order)
+    memmap[:] = arr
+    save_mmap_kwargs(out_dir, dtype, shape, order)
+    return memmap
 
-    @classmethod
-    def from_ndarray(cls, arr: np.ndarray, out_dir: Union[str, Path]):
-        out_dir = Path(out_dir)
-        out_dir.mkdir(exist_ok=True)
-        dtype = arr.dtype
-        shape = arr.shape
-        order = 'F' if np.isfortran(arr) else 'C'
-        memmap = np.memmap(str(out_dir / 'data.ninja'),
-                           mode='w+',
-                           dtype=dtype,
-                           shape=shape,
-                           order=order)
-        memmap[:] = arr
-        save_mmap_kwargs(out_dir, dtype, shape, order)
-        return cls(memmap, dtype, shape, order)
 
-    @classmethod
-    def open_existing(cls, out_dir: Union[str, Path], mode='r'):
-        out_dir = Path(out_dir)
-        kwargs = read_mmap_kwargs(out_dir)
-        memmap = np.memmap(str(out_dir / 'data.ninja'),
-                           mode=mode,
-                           **kwargs)
-        return cls(memmap, **kwargs)
-
+def open_existing(out_dir: Union[str, Path], mode='r'):
+    out_dir = Path(out_dir)
+    kwargs = read_mmap_kwargs(out_dir)
+    memmap = np.memmap(str(out_dir / 'data.ninja'),
+                       mode=mode,
+                       **kwargs)
+    return memmap

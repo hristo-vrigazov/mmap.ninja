@@ -5,7 +5,7 @@ from typing import Sequence, Union
 import numpy as np
 
 from mmap_ninja.base import bytes_to_str, str_to_bytes, sequence_of_strings_to_bytes
-from mmap_ninja.numpy import NumpyMmap
+from mmap_ninja import numpy
 
 
 class StringsMmmap:
@@ -58,14 +58,14 @@ class StringsMmmap:
         buffer, ends, starts = sequence_of_strings_to_bytes(strings)
         with open(out_dir / 'data.ninja', "wb") as f:
             f.write(buffer)
-        NumpyMmap.from_ndarray(np.array(starts), out_dir / 'starts')
-        NumpyMmap.from_ndarray(np.array(ends), out_dir / 'ends')
+        numpy.from_ndarray(np.array(starts), out_dir / 'starts')
+        numpy.from_ndarray(np.array(ends), out_dir / 'ends')
         return cls.open_existing(out_dir)
 
     @classmethod
     def open_existing(cls, out_dir: Union[str, Path], mode='r+b'):
-        starts_np = NumpyMmap.open_existing(out_dir / 'starts', mode='r').memmap
-        ends_np = NumpyMmap.open_existing(out_dir / 'ends', mode='r').memmap
+        starts_np = numpy.open_existing(out_dir / 'starts', mode='r')
+        ends_np = numpy.open_existing(out_dir / 'ends', mode='r')
         return cls(out_dir / 'data.ninja', starts_np, ends_np, mode=mode)
 
 
