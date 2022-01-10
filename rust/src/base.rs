@@ -1,20 +1,23 @@
 use byteorder::LittleEndian;
-use std::str::{Utf8Error};
 use std::primitive::str;
 use byteorder::ReadBytesExt;
 use byteorder::WriteBytesExt;
 
 // TODO: support all parameters as in the Python library!
-pub fn bytes_to_int(mut inp: &[u8]) -> std::io::Result<i32> {
-    inp.read_i32::<LittleEndian>()
+pub fn bytes_to_int32(mut inp: &[u8]) -> i32 {
+    inp.read_i32::<LittleEndian>().expect("Could not convert bytes to int32, corruption?")
 }
 
-pub fn int_to_bytes(inp: i32) -> Vec<u8> {
+pub fn int32_to_bytes(inp: i32) -> Vec<u8> {
     let mut bytes = Vec::new();
-    bytes.write_i32::<LittleEndian>(inp).expect("Failed to convert int to bytes!");
+    bytes.write_i32::<LittleEndian>(inp).expect("Could not convert in32 to bytes!");
     bytes
 }
 
-pub fn bytes_to_string(inp: &[u8]) -> Result<&str, Utf8Error> {
-    std::str::from_utf8(inp)
+pub fn bytes_to_string(inp: &[u8]) -> &str {
+    std::str::from_utf8(inp).expect("Could not convert bytes into string!")
+}
+
+pub fn string_to_bytes(inp: &str) -> &[u8] {
+    inp.as_bytes()
 }
