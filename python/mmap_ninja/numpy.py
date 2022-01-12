@@ -10,6 +10,7 @@ def save_mmap_kwargs(out_dir: Path,
                      dtype,
                      shape,
                      order):
+    out_dir = Path(out_dir)
     out_dir.mkdir(exist_ok=True)
     base.str_to_file(np.dtype(dtype).name, out_dir / f'dtype.ninja')
     base.shape_to_file(shape, out_dir / f'shape.ninja')
@@ -17,6 +18,7 @@ def save_mmap_kwargs(out_dir: Path,
 
 
 def read_mmap_kwargs(out_dir: Path):
+    out_dir = Path(out_dir)
     out_dir.mkdir(exist_ok=True)
     return {
         'dtype': base.file_to_str(out_dir / 'dtype.ninja'),
@@ -60,3 +62,19 @@ def open_existing(out_dir: Union[str, Path], mode='r'):
                        mode=mode,
                        **kwargs)
     return memmap
+
+
+def extend(out_dir: Union[str, Path], arr: np.ndarray):
+    out_dir = Path(out_dir)
+    kwargs = read_mmap_kwargs(out_dir)
+    shape = kwargs['shape']
+    order = kwargs['order']
+    dtype = np.dtype(kwargs['dtype'])
+    assert shape[1:] == arr.shape[1:], f'Trying to append samples with incorrect shape: {arr.shape[1:]}, ' \
+                                       f'expected: {shape[1:]}'
+    with open(out_dir / 'data.ninja', 'ab') as data_file:
+        data_file.write(arr.astype(dtype).tobytes(order=order))
+        data_file.flush()
+    new_shape = (shape[0] + arr.shape[0], *shape[1:])
+    base.shape_to_file(new_shape, out_dir / f'shape.ninja')
+
