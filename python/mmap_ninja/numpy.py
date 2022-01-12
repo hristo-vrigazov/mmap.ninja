@@ -64,7 +64,7 @@ def open_existing(out_dir: Union[str, Path], mode='r'):
     return memmap
 
 
-def extend(out_dir: Union[str, Path], arr: np.ndarray):
+def extend_dir(out_dir: Union[str, Path], arr: np.ndarray):
     out_dir = Path(out_dir)
     kwargs = read_mmap_kwargs(out_dir)
     shape = kwargs['shape']
