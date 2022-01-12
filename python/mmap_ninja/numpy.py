@@ -78,3 +78,7 @@ def extend_dir(out_dir: Union[str, Path], arr: np.ndarray):
     new_shape = (shape[0] + arr.shape[0], *shape[1:])
     base.shape_to_file(new_shape, out_dir / f'shape.ninja')
 
+
+def extend(np_mmap: np.memmap, arr: np.ndarray):
+    extend_dir(Path(np_mmap.filename).parent, arr)
+

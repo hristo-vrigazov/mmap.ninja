@@ -27,3 +27,16 @@ def test_numpy_extend(tmp_path):
     assert memmap[2] == 2
     assert memmap[3] == 11
     assert memmap[4] == 12
+
+
+def test_numpy_extend_alternative_api(tmp_path):
+    arr = np.arange(3)
+    memmap = numpy.from_ndarray(arr, tmp_path / 'growable')
+    numpy.extend(memmap, np.arange(11, 13))
+    memmap = numpy.open_existing(tmp_path / 'growable')
+    assert memmap[0] == 0
+    assert memmap[1] == 1
+    assert memmap[2] == 2
+    assert memmap[3] == 11
+    assert memmap[4] == 12
+
