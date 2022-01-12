@@ -1,6 +1,6 @@
 import mmap
 from pathlib import Path
-from typing import Sequence, Union
+from typing import Sequence, Union, List
 
 import numpy as np
 
@@ -14,7 +14,7 @@ class StringsMmmap:
         self.data_file = Path(data_file)
         self.starts = starts
         self.ends = ends
-        self.range = np.arange(len(starts))
+        self.range = np.arange(len(starts), dtype=np.int32)
         self.file = open(data_file, mode=mode)
         self.buffer = mmap.mmap(self.file.fileno(), 0)
 
@@ -55,15 +55,17 @@ class StringsMmmap:
     def from_strings(cls, strings: Sequence[str], out_dir: Union[str, Path]):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
-        buffer, ends, starts = sequence_of_strings_to_bytes(strings)
+        buffer, starts, ends = sequence_of_strings_to_bytes(strings)
         with open(out_dir / 'data.ninja', "wb") as f:
             f.write(buffer)
-        numpy.from_ndarray(np.array(starts), out_dir / 'starts')
-        numpy.from_ndarray(np.array(ends), out_dir / 'ends')
+        numpy.from_ndarray(np.array(starts, dtype=np.int32), out_dir / 'starts')
+        numpy.from_ndarray(np.array(ends, dtype=np.int32), out_dir / 'ends')
         return cls.open_existing(out_dir)
 
     @classmethod
     def open_existing(cls, out_dir: Union[str, Path], mode='r+b'):
+        out_dir = Path(out_dir)
+        out_dir.mkdir(exist_ok=True)
         starts_np = numpy.open_existing(out_dir / 'starts', mode='r')
         ends_np = numpy.open_existing(out_dir / 'ends', mode='r')
         return cls(out_dir / 'data.ninja', starts_np, ends_np, mode=mode)

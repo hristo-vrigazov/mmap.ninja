@@ -3,19 +3,28 @@ pub mod base;
 
 #[cfg(test)]
 mod tests {
-    use crate::base::{bytes_to_int32, bytes_to_string, int32_to_bytes, string_to_bytes};
+    use crate::base::{bytes_to_i32, bytes_to_str, file_to_i32, i32_to_bytes, i32_to_file, str_to_bytes};
 
     #[test]
     fn test_int_conversions() {
         let expected: i32 = 17;
-        let actual = bytes_to_int32(&int32_to_bytes(expected));
+        let actual = bytes_to_i32(&i32_to_bytes(expected));
         assert_eq!(actual, expected);
     }
 
     #[test]
     fn test_string_conversions() {
         let expected = "ugabuga";
-        let actual = bytes_to_string(&string_to_bytes(expected));
+        let actual = bytes_to_str(&str_to_bytes(expected));
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_int_file_conversions() {
+        let expected: i32 = 17;
+        let filename = "./test_rust";
+        i32_to_file(expected, filename);
+        let actual = file_to_i32(filename);
         assert_eq!(actual, expected);
     }
 

@@ -3,7 +3,7 @@ from mmap_ninja import base
 
 def test_int_conversions():
     a = 17
-    assert a == base.bytes_to_int(base.int_to_bytes(a))
+    assert a == base.bytes_to_int32(base.int32_to_bytes(a))
 
 
 def test_int_file_conversions(tmp_path):

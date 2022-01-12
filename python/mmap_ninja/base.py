@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Union, Sequence
 
 
-def bytes_to_int(inp: bytes, byteorder="little", signed=True) -> int:
+def bytes_to_int32(inp: bytes, byteorder="little", signed=True) -> int:
     return int.from_bytes(bytes=inp, byteorder=byteorder, signed=signed)
 
 
@@ -11,7 +11,7 @@ def bytes_to_str(inp: bytes, encoding: str = 'utf-8') -> str:
     return inp.decode(encoding)
 
 
-def int_to_bytes(inp: int, fmt: str = '<i') -> bytes:
+def int32_to_bytes(inp: int, fmt: str = '<i') -> bytes:
     return struct.pack(fmt, inp)
 
 
@@ -21,7 +21,7 @@ def str_to_bytes(inp: str, encoding: str = 'utf-8') -> bytes:
 
 def int_to_file(inp: int, file: Union[str, Path], *args, **kwargs):
     with open(file, 'wb') as out_file:
-        out_file.write(int_to_bytes(inp, *args, **kwargs))
+        out_file.write(int32_to_bytes(inp, *args, **kwargs))
 
 
 def str_to_file(inp: str, file: Union[str, Path], *args, **kwargs):
@@ -31,7 +31,7 @@ def str_to_file(inp: str, file: Union[str, Path], *args, **kwargs):
 
 def file_to_int(file: Union[str, Path], *args, **kwargs) -> int:
     with open(file, 'rb') as in_file:
-        return bytes_to_int(in_file.read(), *args, **kwargs)
+        return bytes_to_int32(in_file.read(), *args, **kwargs)
 
 
 def file_to_str(file: Union[str, Path], *args, **kwargs) -> str:
@@ -42,7 +42,7 @@ def file_to_str(file: Union[str, Path], *args, **kwargs) -> str:
 def shape_to_bytes(shape: Sequence[int]) -> bytes:
     res = bytearray()
     for axis_len in shape:
-        res.extend(int_to_bytes(axis_len))
+        res.extend(int32_to_bytes(axis_len))
     return bytes(res)
 
 
@@ -50,7 +50,7 @@ def bytes_to_shape(inp: bytes, step=4) -> Sequence[int]:
     res = []
     for start in range(0, len(inp) - 1, step):
         end = start + step
-        res.append(bytes_to_int(inp[start:end]))
+        res.append(bytes_to_int32(inp[start:end]))
     return tuple(res)
 
 
@@ -73,4 +73,4 @@ def sequence_of_strings_to_bytes(strings):
         starts.append(len(buffer))
         ends.append(len(buffer) + len(arr))
         buffer.extend(arr)
-    return bytes(buffer), ends, starts
+    return bytes(buffer), starts, ends
