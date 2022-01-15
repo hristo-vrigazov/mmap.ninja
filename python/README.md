@@ -18,13 +18,12 @@ for i in range(len(memmap)):
 memmap.close()
 ```
 
-
 ```python
-from mmap_ninja.ragged import RaggedMMap
+from mmap_ninja.ragged import RaggedMmap
 from pathlib import Path
 
 tmp_path = Path('.')
-memmap = RaggedMMap.open_existing(tmp_path / 'ragged')
+memmap = RaggedMmap.open_existing(tmp_path / 'ragged')
 for i in range(len(memmap)):
     print(memmap[i])
 memmap.close()

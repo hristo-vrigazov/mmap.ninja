@@ -6,7 +6,7 @@ import numpy as np
 from mmap_ninja import numpy
 
 
-class RaggedMMap:
+class RaggedMmap:
 
     def __init__(self, data_file: Union[str, Path],
                  starts,
