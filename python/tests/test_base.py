@@ -9,8 +9,8 @@ def test_int_conversions():
 def test_int_file_conversions(tmp_path):
     a = 17
     file = tmp_path / 'int'
-    base.int_to_file(a, file)
-    assert a == base.file_to_int(file)
+    base.int32_to_file(a, file)
+    assert a == base.file_to_int32(file)
 
 
 def test_str_conversions():

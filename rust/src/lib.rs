@@ -3,7 +3,7 @@ pub mod base;
 
 #[cfg(test)]
 mod tests {
-    use crate::base::{bytes_to_i32, bytes_to_str, file_to_i32, i32_to_bytes, i32_to_file, str_to_bytes};
+    use crate::base::{bytes_to_i32, bytes_to_shape, bytes_to_str, file_to_i32, file_to_string, i32_to_bytes, i32_to_file, shape_to_bytes, str_to_bytes, str_to_file};
 
     #[test]
     fn test_int_conversions() {
@@ -26,6 +26,22 @@ mod tests {
         i32_to_file(expected, filename);
         let actual = file_to_i32(filename);
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_string_file_conversions() {
+        let expected = "ugabuga";
+        let filename = "./test_rust2";
+        str_to_file(expected, filename);
+        let actual = file_to_string(filename);
+        assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn test_shape_conversions() {
+        let shape = vec![1, 9, 10, 1];
+        let actual = bytes_to_shape(&shape_to_bytes(&shape));
+        assert_eq!(actual, shape);
     }
 
     // #[test]

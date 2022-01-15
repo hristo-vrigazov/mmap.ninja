@@ -7,31 +7,31 @@ def bytes_to_int32(inp: bytes, byteorder="little", signed=True) -> int:
     return int.from_bytes(bytes=inp, byteorder=byteorder, signed=signed)
 
 
-def bytes_to_str(inp: bytes, encoding: str = 'utf-8') -> str:
-    return inp.decode(encoding)
-
-
 def int32_to_bytes(inp: int, fmt: str = '<i') -> bytes:
     return struct.pack(fmt, inp)
+
+
+def bytes_to_str(inp: bytes, encoding: str = 'utf-8') -> str:
+    return inp.decode(encoding)
 
 
 def str_to_bytes(inp: str, encoding: str = 'utf-8') -> bytes:
     return inp.encode(encoding)
 
 
-def int_to_file(inp: int, file: Union[str, Path], *args, **kwargs):
+def int32_to_file(inp: int, file: Union[str, Path], *args, **kwargs):
     with open(file, 'wb') as out_file:
         out_file.write(int32_to_bytes(inp, *args, **kwargs))
+
+
+def file_to_int32(file: Union[str, Path], *args, **kwargs) -> int:
+    with open(file, 'rb') as in_file:
+        return bytes_to_int32(in_file.read(), *args, **kwargs)
 
 
 def str_to_file(inp: str, file: Union[str, Path], *args, **kwargs):
     with open(file, 'wb') as out_file:
         out_file.write(str_to_bytes(inp, *args, **kwargs))
-
-
-def file_to_int(file: Union[str, Path], *args, **kwargs) -> int:
-    with open(file, 'rb') as in_file:
-        return bytes_to_int32(in_file.read(), *args, **kwargs)
 
 
 def file_to_str(file: Union[str, Path], *args, **kwargs) -> str:
