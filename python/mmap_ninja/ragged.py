@@ -26,7 +26,7 @@ class RaggedMMap:
         self.n = len(self.shapes)
         self.range = np.arange(self.n)
 
-        self.memmap = numpy.open_existing(self.out_dir)
+        self.memmap = numpy.open_existing(self.out_dir, mode='r+')
 
     def get_multiple(self, item):
         indices = self.range[item]
