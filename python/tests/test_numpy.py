@@ -40,3 +40,14 @@ def test_numpy_extend_alternative_api(tmp_path):
     assert memmap[3] == 11
     assert memmap[4] == 12
 
+
+def simple_gen():
+    for i in range(30):
+        yield i
+
+
+def test_numpy_from_generator(tmp_path):
+    memmap = numpy.from_generator(simple_gen(), tmp_path / 'generator', batch_size=4, n=30)
+    for i in range(30):
+        assert i == memmap[i]
+

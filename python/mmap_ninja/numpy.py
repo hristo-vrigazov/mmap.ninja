@@ -27,7 +27,7 @@ def read_mmap_kwargs(out_dir: Path):
     }
 
 
-def empty(out_dir: Union[str, Path], dtype, shape, order):
+def empty(out_dir: Union[str, Path], dtype, shape, order) -> np.memmap:
     out_dir = Path(out_dir)
     out_dir.mkdir(exist_ok=True)
     save_mmap_kwargs(out_dir, dtype, shape, order)
@@ -39,7 +39,7 @@ def empty(out_dir: Union[str, Path], dtype, shape, order):
     return memmap
 
 
-def from_ndarray(arr: np.ndarray, out_dir: Union[str, Path]):
+def from_ndarray(arr: np.ndarray, out_dir: Union[str, Path]) -> np.memmap:
     out_dir = Path(out_dir)
     out_dir.mkdir(exist_ok=True)
     dtype = arr.dtype
@@ -52,6 +52,38 @@ def from_ndarray(arr: np.ndarray, out_dir: Union[str, Path]):
                        order=order)
     memmap[:] = arr
     save_mmap_kwargs(out_dir, dtype, shape, order)
+    return memmap
+
+
+def write_samples(memmap, out_dir, samples, start, total):
+    arr = np.stack(samples)
+    if memmap is None:
+        dtype = arr.dtype
+        shape = (total,) + arr.shape[1:]
+        order = 'F' if np.isfortran(arr) else 'C'
+        memmap = np.memmap(str(out_dir / 'data.ninja'),
+                           mode='w+',
+                           dtype=dtype,
+                           shape=shape,
+                           order=order)
+    end = start + len(samples)
+    memmap[start:end] = arr
+    return memmap, end
+
+
+def from_generator(sample_generator, out_dir: Union[str, Path], n: int, batch_size: int) -> np.memmap:
+    out_dir = Path(out_dir)
+    out_dir.mkdir(exist_ok=True)
+    samples = []
+    memmap = None
+    start = 0
+    for sample in sample_generator:
+        samples.append(sample)
+        if len(samples) % batch_size == 0:
+            memmap, start = write_samples(memmap, out_dir, samples, start, n)
+            samples = []
+    if len(samples) > 0:
+        memmap, start = write_samples(memmap, out_dir, samples, start, n)
     return memmap
 
 
@@ -81,4 +113,3 @@ def extend_dir(out_dir: Union[str, Path], arr: np.ndarray):
 
 def extend(np_mmap: np.memmap, arr: np.ndarray):
     extend_dir(Path(np_mmap.filename).parent, arr)
-
