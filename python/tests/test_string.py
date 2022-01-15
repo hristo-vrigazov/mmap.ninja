@@ -21,3 +21,19 @@ def test_base_case(tmp_path):
     memmap.close()
 
 
+def test_extend(tmp_path):
+    list_of_strings = [
+        'Torba',
+        'Boiler',
+        'a',
+        'zele pitka',
+        '',
+        'popo'
+    ]
+
+    memmap = StringsMmmap.from_strings(list_of_strings, tmp_path / 'strings_memmap')
+    memmap.extend(['new', 'new2', 'uga dunga'])
+    assert len(memmap) == 9
+    assert memmap[-1] == 'uga dunga'
+    assert memmap[-2] == 'new2'
+    assert memmap[-3] == 'new'
