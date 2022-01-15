@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 
 # This call to setup() does all the work
 setup(
-    name="dnn_cool",
+    name="mmap_ninja",
     version=mmap_ninja.__version__,
     description="mmap.ninja: Memory mapped data structures",
     long_description=README,
