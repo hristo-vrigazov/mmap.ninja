@@ -1,4 +1,5 @@
 pub mod base;
+pub mod numpy;
 
 
 #[cfg(test)]
