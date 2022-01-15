@@ -77,3 +77,5 @@ def sequence_of_strings_to_bytes(strings: Sequence[str], verbose=False):
         ends.append(len(buffer) + len(arr))
         buffer.extend(arr)
     return bytes(buffer), starts, ends
+
+
