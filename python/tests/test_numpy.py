@@ -47,7 +47,7 @@ def simple_gen():
 
 
 def test_numpy_from_generator(tmp_path):
-    memmap = numpy.from_generator(simple_gen(), tmp_path / 'generator', batch_size=4, n=30)
+    memmap = numpy.from_generator(simple_gen(), tmp_path / 'generator', n=30, batch_size=4)
     for i in range(30):
         assert i == memmap[i]
 

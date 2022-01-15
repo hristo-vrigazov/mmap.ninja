@@ -37,3 +37,15 @@ def test_extend(tmp_path):
     assert memmap[-1] == 'uga dunga'
     assert memmap[-2] == 'new2'
     assert memmap[-3] == 'new'
+
+
+def generate_strs():
+    for i in range(30):
+        yield str(i)
+
+
+def test_from_generator(tmp_path):
+    memmap = StringsMmmap.from_generator(generate_strs(), tmp_path / 'strings_memmap', 4)
+    for i in range(30):
+        assert str(i) == memmap[i]
+

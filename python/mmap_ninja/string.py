@@ -1,6 +1,6 @@
 import mmap
 from pathlib import Path
-from typing import Sequence, Union
+from typing import Sequence, Union, Generator
 
 import numpy as np
 
@@ -71,6 +71,10 @@ class StringsMmmap:
         self.ends = numpy.open_existing(out_dir / 'ends', mode='r')
         self.file = open(self.data_file, mode=self.mode)
         self.buffer = mmap.mmap(self.file.fileno(), 0)
+        self.range = np.arange(len(self.starts), dtype=np.int32)
+
+    def append(self, string: str):
+        self.extend([string])
 
     @classmethod
     def from_strings(cls, strings: Sequence[str], out_dir: Union[str, Path]):
@@ -82,6 +86,30 @@ class StringsMmmap:
         numpy.from_ndarray(np.array(starts, dtype=np.int32), out_dir / 'starts')
         numpy.from_ndarray(np.array(ends, dtype=np.int32), out_dir / 'ends')
         return cls.open_existing(out_dir)
+
+    @classmethod
+    def from_generator(cls, sample_generator: Generator[str, None, None],
+                       out_dir: Union[str, Path],
+                       batch_size: int):
+        out_dir = Path(out_dir)
+        out_dir.mkdir(exist_ok=True)
+        samples = []
+        memmap = None
+        for sample in sample_generator:
+            samples.append(sample)
+            if len(samples) % batch_size != 0:
+                continue
+            if memmap is None:
+                memmap = cls.from_strings(samples, out_dir)
+            else:
+                memmap.extend(samples)
+            samples = []
+        if len(samples) > 0:
+            if memmap is None:
+                memmap = cls.from_strings(samples, out_dir)
+            else:
+                memmap.extend(samples)
+        return memmap
 
     @classmethod
     def open_existing(cls, out_dir: Union[str, Path], mode='r+b'):

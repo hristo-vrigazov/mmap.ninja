@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Union
+from typing import Union, Generator
 from mmap_ninja import base
 
 # See: https://numpy.org/doc/stable/reference/generated/numpy.memmap.html
@@ -71,7 +71,9 @@ def write_samples(memmap, out_dir, samples, start, total):
     return memmap, end
 
 
-def from_generator(sample_generator, out_dir: Union[str, Path], n: int, batch_size: int) -> np.memmap:
+def from_generator(sample_generator: Generator[str, None, None],
+                   out_dir: Union[str, Path],
+                   batch_size: int, n: int) -> np.memmap:
     out_dir = Path(out_dir)
     out_dir.mkdir(exist_ok=True)
     samples = []
@@ -79,9 +81,10 @@ def from_generator(sample_generator, out_dir: Union[str, Path], n: int, batch_si
     start = 0
     for sample in sample_generator:
         samples.append(sample)
-        if len(samples) % batch_size == 0:
-            memmap, start = write_samples(memmap, out_dir, samples, start, n)
-            samples = []
+        if len(samples) % batch_size != 0:
+            continue
+        memmap, start = write_samples(memmap, out_dir, samples, start, n)
+        samples = []
     if len(samples) > 0:
         memmap, start = write_samples(memmap, out_dir, samples, start, n)
     return memmap
