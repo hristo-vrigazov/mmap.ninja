@@ -1,6 +1,6 @@
 import struct
 from pathlib import Path
-from typing import Union, Sequence, List
+from typing import Union, Sequence
 
 
 def bytes_to_int32(inp: bytes, byteorder="little", signed=True) -> int:
@@ -64,10 +64,13 @@ def file_to_shape(file: Union[str, Path]) -> Sequence[int]:
         return bytes_to_shape(out_file.read())
 
 
-def sequence_of_strings_to_bytes(strings: Sequence[str]):
+def sequence_of_strings_to_bytes(strings: Sequence[str], verbose=False):
     buffer = bytearray()
     starts = []
     ends = []
+    if verbose:
+        from tqdm import tqdm
+        strings = tqdm(strings)
     for string in strings:
         arr = str_to_bytes(string)
         starts.append(len(buffer))

@@ -1,9 +1,10 @@
 from pathlib import Path
-from typing import Union, Generator
-from mmap_ninja import base
+from typing import Union
 
 # See: https://numpy.org/doc/stable/reference/generated/numpy.memmap.html
 import numpy as np
+
+from mmap_ninja import base
 
 
 def save_mmap_kwargs(out_dir: Path,
@@ -71,14 +72,19 @@ def write_samples(memmap, out_dir, samples, start, total):
     return memmap, end
 
 
-def from_generator(sample_generator: Generator[str, None, None],
+def from_generator(sample_generator,
                    out_dir: Union[str, Path],
-                   batch_size: int, n: int) -> np.memmap:
+                   batch_size: int,
+                   n: int,
+                   verbose=False) -> np.memmap:
     out_dir = Path(out_dir)
     out_dir.mkdir(exist_ok=True)
     samples = []
     memmap = None
     start = 0
+    if verbose:
+        from tqdm import tqdm
+        sample_generator = tqdm(sample_generator, total=n)
     for sample in sample_generator:
         samples.append(sample)
         if len(samples) % batch_size != 0:

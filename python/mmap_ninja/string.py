@@ -1,6 +1,6 @@
 import mmap
 from pathlib import Path
-from typing import Sequence, Union, Generator
+from typing import Sequence, Union
 
 import numpy as np
 
@@ -55,8 +55,8 @@ class StringsMmmap:
         self.buffer.close()
         self.file.close()
 
-    def extend(self, list_of_strings: Sequence[str]):
-        buffer, start_offsets, end_offsets = sequence_of_strings_to_bytes(list_of_strings)
+    def extend(self, list_of_strings: Sequence[str], verbose=False):
+        buffer, start_offsets, end_offsets = sequence_of_strings_to_bytes(list_of_strings, verbose=verbose)
         end = self.ends[-1]
         start_offsets = end + start_offsets
         end_offsets = end + end_offsets
@@ -77,10 +77,10 @@ class StringsMmmap:
         self.extend([string])
 
     @classmethod
-    def from_strings(cls, strings: Sequence[str], out_dir: Union[str, Path]):
+    def from_strings(cls, strings: Sequence[str], out_dir: Union[str, Path], verbose=False):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
-        buffer, starts, ends = sequence_of_strings_to_bytes(strings)
+        buffer, starts, ends = sequence_of_strings_to_bytes(strings, verbose=verbose)
         with open(out_dir / 'data.ninja', "wb") as f:
             f.write(buffer)
         numpy.from_ndarray(np.array(starts, dtype=np.int32), out_dir / 'starts')
@@ -88,13 +88,17 @@ class StringsMmmap:
         return cls.open_existing(out_dir)
 
     @classmethod
-    def from_generator(cls, sample_generator: Generator[str, None, None],
+    def from_generator(cls, sample_generator,
                        out_dir: Union[str, Path],
-                       batch_size: int):
+                       batch_size: int,
+                       verbose=False):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
         samples = []
         memmap = None
+        if verbose:
+            from tqdm import tqdm
+            sample_generator = tqdm(sample_generator)
         for sample in sample_generator:
             samples.append(sample)
             if len(samples) % batch_size != 0:
