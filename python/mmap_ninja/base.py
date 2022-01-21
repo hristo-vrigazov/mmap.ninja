@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Union, Sequence, List
 
 
-def bytes_to_int32(inp: bytes, byteorder="little", signed=True) -> int:
-    return int.from_bytes(bytes=inp, byteorder=byteorder, signed=signed)
+def bytes_to_int32(inp: bytes, fmt: str = '<i') -> int:
+    return struct.unpack(fmt, inp)[0]
 
 
 def int32_to_bytes(inp: int, fmt: str = '<i') -> bytes:
@@ -40,18 +40,18 @@ def file_to_str(file: Union[str, Path], *args, **kwargs) -> str:
         return bytes_to_str(in_file.read(), *args, **kwargs)
 
 
-def shape_to_bytes(shape: Sequence[int]) -> bytes:
+def shape_to_bytes(shape: Sequence[int], fmt: str = '<L') -> bytes:
     res = bytearray()
     for axis_len in shape:
-        res.extend(int32_to_bytes(axis_len))
+        res.extend(int32_to_bytes(axis_len, fmt=fmt))
     return bytes(res)
 
 
-def bytes_to_shape(inp: bytes, step=4) -> Sequence[int]:
+def bytes_to_shape(inp: bytes, step=4, fmt: str = '<L') -> Sequence[int]:
     res = []
     for start in range(0, len(inp) - 1, step):
         end = start + step
-        res.append(bytes_to_int32(inp[start:end]))
+        res.append(bytes_to_int32(inp[start:end], fmt=fmt))
     return tuple(res)
 
 
