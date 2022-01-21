@@ -99,8 +99,8 @@ class StringsMmmap:
         bytes_slices = sequence_of_strings_to_bytes(strings, verbose=verbose)
         with open(out_dir / 'data.ninja', "wb") as f:
             f.write(bytes_slices.buffer)
-        numpy.from_ndarray(np.array(bytes_slices.starts, dtype=np.int32), out_dir / 'starts')
-        numpy.from_ndarray(np.array(bytes_slices.ends, dtype=np.int32), out_dir / 'ends')
+        numpy.from_ndarray(out_dir / 'starts', np.array(bytes_slices.starts, dtype=np.int32))
+        numpy.from_ndarray(out_dir / 'ends', np.array(bytes_slices.ends, dtype=np.int32))
         return cls(out_dir,
                    mode=mode,
                    starts_key=starts_key,

@@ -5,7 +5,7 @@ from mmap_ninja import numpy
 
 def test_numpy(tmp_path):
     arr = np.arange(10)
-    memmap = numpy.from_ndarray(arr, tmp_path / 'numpy_mmap')
+    memmap = numpy.from_ndarray(tmp_path / 'numpy_mmap', arr)
 
     for i, el in enumerate(arr):
         assert el == memmap[i]
@@ -19,7 +19,7 @@ def test_numpy_from_empty(tmp_path):
 
 def test_numpy_extend(tmp_path):
     arr = np.arange(3)
-    memmap = numpy.from_ndarray(arr, tmp_path / 'growable')
+    memmap = numpy.from_ndarray(tmp_path / 'growable', arr)
     numpy.extend_dir(tmp_path / 'growable', np.arange(11, 13))
     memmap = numpy.open_existing(tmp_path / 'growable')
     assert memmap[0] == 0
@@ -31,7 +31,7 @@ def test_numpy_extend(tmp_path):
 
 def test_numpy_extend_alternative_api(tmp_path):
     arr = np.arange(3)
-    memmap = numpy.from_ndarray(arr, tmp_path / 'growable')
+    memmap = numpy.from_ndarray(tmp_path / 'growable', arr)
     numpy.extend(memmap, np.arange(11, 13))
     memmap = numpy.open_existing(tmp_path / 'growable')
     assert memmap[0] == 0
@@ -50,6 +50,4 @@ def test_numpy_from_generator(tmp_path):
     memmap = numpy.from_generator(simple_gen(), tmp_path / 'generator', n=30, batch_size=4, verbose=True)
     for i in range(30):
         assert i == memmap[i]
-
-
 

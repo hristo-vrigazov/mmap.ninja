@@ -41,7 +41,8 @@ def empty(out_dir: Union[str, Path], dtype, shape, order) -> np.memmap:
     return memmap
 
 
-def from_ndarray(arr: np.ndarray, out_dir: Union[str, Path]) -> np.memmap:
+def from_ndarray(out_dir: Union[str, Path], arr: np.ndarray) -> np.memmap:
+    arr = np.asarray(arr)
     out_dir = Path(out_dir)
     out_dir.mkdir(exist_ok=True)
     dtype = arr.dtype
