@@ -34,7 +34,7 @@ def test_open_existing(tmp_path):
     ]
 
     memmap = StringsMmmap.from_strings(list_of_strings, tmp_path / 'strings_memmap', verbose=True)
-    memmap = StringsMmmap.open_existing(tmp_path / 'strings_memmap')
+    memmap = StringsMmmap(tmp_path / 'strings_memmap')
     for i, string in enumerate(list_of_strings):
         assert string == memmap[i]
     memmap[:2] = ['Korbo', 'Moiler']

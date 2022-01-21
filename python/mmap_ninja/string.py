@@ -10,12 +10,22 @@ from mmap_ninja.base import bytes_to_str, str_to_bytes, sequence_of_strings_to_b
 
 class StringsMmmap:
 
-    def __init__(self, data_file: Union[str, Path], starts, ends, mode='r+b'):
+    def __init__(self, out_dir: Union[str, Path],
+                 mode='r+b',
+                 starts_key='starts',
+                 ends_key='ends'):
+        out_dir = Path(out_dir)
+        out_dir.mkdir(exist_ok=True)
+        data_file = out_dir / 'data.ninja'
         self.data_file = Path(data_file)
         self.mode = mode
-        self.starts = starts
-        self.ends = ends
-        self.range = np.arange(len(starts), dtype=np.int32)
+        self.out_dir = out_dir
+        self.starts_key = starts_key
+        self.ends_key = ends_key
+
+        self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode='r')
+        self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode='r')
+        self.range = np.arange(len(self.starts), dtype=np.int32)
         self.file = open(data_file, mode=mode)
         self.buffer = mmap.mmap(self.file.fileno(), 0)
 
@@ -67,17 +77,22 @@ class StringsMmmap:
         with open(out_dir / 'data.ninja', 'ab') as data_file:
             data_file.write(bytes_slices.buffer)
             data_file.flush()
-        self.starts = numpy.open_existing(out_dir / 'starts', mode='r')
-        self.ends = numpy.open_existing(out_dir / 'ends', mode='r')
+
+        self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode='r')
+        self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode='r')
+        self.range = np.arange(len(self.starts), dtype=np.int32)
         self.file = open(self.data_file, mode=self.mode)
         self.buffer = mmap.mmap(self.file.fileno(), 0)
-        self.range = np.arange(len(self.starts), dtype=np.int32)
 
     def append(self, string: str):
         self.extend([string])
 
     @classmethod
-    def from_strings(cls, strings: Sequence[str], out_dir: Union[str, Path], verbose=False):
+    def from_strings(cls, strings: Sequence[str], out_dir: Union[str, Path],
+                     mode='r+b',
+                     starts_key='starts',
+                     ends_key='ends',
+                     verbose=False):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
         bytes_slices = sequence_of_strings_to_bytes(strings, verbose=verbose)
@@ -85,7 +100,10 @@ class StringsMmmap:
             f.write(bytes_slices.buffer)
         numpy.from_ndarray(np.array(bytes_slices.starts, dtype=np.int32), out_dir / 'starts')
         numpy.from_ndarray(np.array(bytes_slices.ends, dtype=np.int32), out_dir / 'ends')
-        return cls.open_existing(out_dir)
+        return cls(out_dir,
+                   mode=mode,
+                   starts_key=starts_key,
+                   ends_key=ends_key)
 
     @classmethod
     def from_generator(cls, sample_generator,
@@ -115,11 +133,3 @@ class StringsMmmap:
                 memmap.extend(samples)
         return memmap
 
-    @classmethod
-    def open_existing(cls, out_dir: Union[str, Path], mode='r+b',
-                      starts_key='starts', ends_key='ends'):
-        out_dir = Path(out_dir)
-        out_dir.mkdir(exist_ok=True)
-        starts_np = numpy.open_existing(out_dir / starts_key, mode='r')
-        ends_np = numpy.open_existing(out_dir / ends_key, mode='r')
-        return cls(out_dir / 'data.ninja', starts_np, ends_np, mode=mode)

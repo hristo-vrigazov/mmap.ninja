@@ -12,7 +12,7 @@ from mmap_ninja.string import StringsMmmap
 from pathlib import Path
 
 tmp_path = Path('.')
-memmap = StringsMmmap.open_existing(tmp_path / 'strings_memmap')
+memmap = StringsMmmap(tmp_path / 'strings_memmap')
 for i in range(len(memmap)):
     print(memmap[i])
 memmap.close()
@@ -23,7 +23,7 @@ from mmap_ninja.ragged import RaggedMmap
 from pathlib import Path
 
 tmp_path = Path('.')
-memmap = RaggedMmap.open_existing(tmp_path / 'ragged')
+memmap = RaggedMmap(tmp_path / 'ragged')
 for i in range(len(memmap)):
     print(memmap[i])
 memmap.close()
