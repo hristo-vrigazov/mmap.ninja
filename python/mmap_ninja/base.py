@@ -4,11 +4,11 @@ from pathlib import Path
 from typing import Union, Sequence, List
 
 
-def bytes_to_int32(inp: bytes, fmt: str = '<i') -> int:
+def bytes_to_int(inp: bytes, fmt: str = '<i') -> int:
     return struct.unpack(fmt, inp)[0]
 
 
-def int32_to_bytes(inp: int, fmt: str = '<i') -> bytes:
+def int_to_bytes(inp: int, fmt: str = '<i') -> bytes:
     return struct.pack(fmt, inp)
 
 
@@ -20,14 +20,14 @@ def str_to_bytes(inp: str, encoding: str = 'utf-8') -> bytes:
     return inp.encode(encoding)
 
 
-def int32_to_file(inp: int, file: Union[str, Path], *args, **kwargs):
+def int_to_file(inp: int, file: Union[str, Path], *args, **kwargs):
     with open(file, 'wb') as out_file:
-        out_file.write(int32_to_bytes(inp, *args, **kwargs))
+        out_file.write(int_to_bytes(inp, *args, **kwargs))
 
 
-def file_to_int32(file: Union[str, Path], *args, **kwargs) -> int:
+def file_to_int(file: Union[str, Path], *args, **kwargs) -> int:
     with open(file, 'rb') as in_file:
-        return bytes_to_int32(in_file.read(), *args, **kwargs)
+        return bytes_to_int(in_file.read(), *args, **kwargs)
 
 
 def str_to_file(inp: str, file: Union[str, Path], *args, **kwargs):
@@ -43,7 +43,7 @@ def file_to_str(file: Union[str, Path], *args, **kwargs) -> str:
 def shape_to_bytes(shape: Sequence[int], fmt: str = '<L') -> bytes:
     res = bytearray()
     for axis_len in shape:
-        res.extend(int32_to_bytes(axis_len, fmt=fmt))
+        res.extend(int_to_bytes(axis_len, fmt=fmt))
     return bytes(res)
 
 
@@ -51,7 +51,7 @@ def bytes_to_shape(inp: bytes, step=4, fmt: str = '<L') -> Sequence[int]:
     res = []
     for start in range(0, len(inp) - 1, step):
         end = start + step
-        res.append(bytes_to_int32(inp[start:end], fmt=fmt))
+        res.append(bytes_to_int(inp[start:end], fmt=fmt))
     return tuple(res)
 
 

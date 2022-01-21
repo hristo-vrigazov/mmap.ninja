@@ -1,30 +1,13 @@
 ## mmap.ninja Python API
 
-Extension to `numpy.memmap`, which currently includes a `RaggedMemoryMap` (where the elements are of different shape),
-and a `StringsMmmap`  (which is about 9 times faster than just storing your documents as text files).
+### Memory mapping text documents
 
-Currently under active development, API is not yet stable.
 
-Examples:
 
-```python
-from mmap_ninja.string import StringsMmmap
-from pathlib import Path
+### Memory mapping images with different shapes
 
-tmp_path = Path('.')
-memmap = StringsMmmap(tmp_path / 'strings_memmap')
-for i in range(len(memmap)):
-    print(memmap[i])
-memmap.close()
-```
-
-```python
-from mmap_ninja.ragged import RaggedMmap
-from pathlib import Path
-
-tmp_path = Path('.')
-memmap = RaggedMmap(tmp_path / 'ragged')
-for i in range(len(memmap)):
-    print(memmap[i])
-memmap.close()
-```
+|                  |   Initial load (s) |   Time for iteration (s) | Memory usage (GB)   | Disk usage (GB)   |
+|:-----------------|-------------------:|-------------------------:|:--------------------|:------------------|
+| in_memory        |           1.356077 |                 0.000403 | 3.818741 GB         | 3.819034 GB       |
+| ragged_mmap      |           0.002054 |                 0.057858 | 0.001144 GB         | 3.819114 GB       |
+| imread_from_disk |           0.000000 |                22.208385 | 0.001144 GB         | 0.758753 GB       |

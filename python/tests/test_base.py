@@ -3,14 +3,14 @@ from mmap_ninja import base
 
 def test_int_conversions():
     a = 17
-    assert a == base.bytes_to_int32(base.int32_to_bytes(a))
+    assert a == base.bytes_to_int(base.int_to_bytes(a))
 
 
 def test_int_file_conversions(tmp_path):
     a = 17
     file = tmp_path / 'int'
-    base.int32_to_file(a, file)
-    assert a == base.file_to_int32(file)
+    base.int_to_file(a, file)
+    assert a == base.file_to_int(file)
 
 
 def test_str_conversions():
