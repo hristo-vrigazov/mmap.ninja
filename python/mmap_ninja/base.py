@@ -1,6 +1,7 @@
 import struct
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Union, Sequence
+from typing import Union, Sequence, List
 
 
 def bytes_to_int32(inp: bytes, byteorder="little", signed=True) -> int:
@@ -64,7 +65,14 @@ def file_to_shape(file: Union[str, Path]) -> Sequence[int]:
         return bytes_to_shape(out_file.read())
 
 
-def sequence_of_strings_to_bytes(strings: Sequence[str], verbose=False):
+@dataclass
+class BytesSlices:
+    buffer: bytes
+    starts: List[int]
+    ends: List[int]
+
+
+def sequence_of_strings_to_bytes(strings: Sequence[str], verbose=False) -> BytesSlices:
     buffer = bytearray()
     starts = []
     ends = []
@@ -76,6 +84,6 @@ def sequence_of_strings_to_bytes(strings: Sequence[str], verbose=False):
         starts.append(len(buffer))
         ends.append(len(buffer) + len(arr))
         buffer.extend(arr)
-    return bytes(buffer), starts, ends
+    return BytesSlices(bytes(buffer), starts, ends)
 
 

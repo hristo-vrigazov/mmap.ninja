@@ -1,5 +1,6 @@
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Union
+from typing import Union, List, Tuple, Sequence
 
 # See: https://numpy.org/doc/stable/reference/generated/numpy.memmap.html
 import numpy as np
@@ -106,6 +107,7 @@ def open_existing(out_dir: Union[str, Path], mode='r'):
 
 
 def extend_dir(out_dir: Union[str, Path], arr: np.ndarray):
+    arr = np.asarray(arr)
     out_dir = Path(out_dir)
     kwargs = read_mmap_kwargs(out_dir)
     shape = kwargs['shape']
@@ -122,3 +124,33 @@ def extend_dir(out_dir: Union[str, Path], arr: np.ndarray):
 
 def extend(np_mmap: np.memmap, arr: np.ndarray):
     extend_dir(Path(np_mmap.filename).parent, arr)
+
+
+@dataclass
+class NumpyBytesSlices:
+    buffer: np.ndarray
+    starts: List[int]
+    ends: List[int]
+    flattened_shapes: List[int]
+    shapes: List[Tuple[int]]
+
+
+def lists_of_ndarrays_to_bytes(lists: Sequence[np.ndarray], dtype):
+    offset = 0
+    starts = []
+    ends = []
+    shapes = []
+    arrs = []
+    flattened_shapes = []
+    for l in lists:
+        arr = np.asarray(l, dtype=dtype)
+        flattened = arr.ravel()
+        starts.append(offset)
+        ends.append(offset + len(flattened))
+        flattened_shapes.append(len(flattened))
+        shapes.append(arr.shape if len(arr.shape) > 0 else (0,))
+        arrs.append(flattened)
+        offset += len(flattened)
+    buffer = np.concatenate(arrs)
+    return NumpyBytesSlices(buffer, starts, ends, flattened_shapes, shapes)
+

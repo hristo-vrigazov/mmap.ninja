@@ -14,7 +14,7 @@ def test_base_case(tmp_path):
 def test_open_existing_case(tmp_path):
     simple = list(range(4))
     mmap = RaggedMmap.from_lists(tmp_path / 'simple', simple)
-    mmap = RaggedMmap.open_existing(tmp_path / 'simple')
+    mmap = RaggedMmap(tmp_path / 'simple')
     for i in range(4):
         assert i == mmap[i]
 
@@ -82,3 +82,21 @@ def test_wrapper(tmp_path):
     ]
     mmap = RaggedMmap.from_lists(tmp_path / 'simple', simple, wrapper_fn=lambda x: np.array(x, dtype=np.int8))
     assert mmap[0].dtype == np.int8
+
+
+def test_extend(tmp_path):
+    simple = [
+        np.array([11, 13, -1, 17]),
+        np.array([2, 3, 4, 19]),
+        np.array([90, 12])
+    ]
+    mmap = RaggedMmap.from_lists(tmp_path / 'base', simple, wrapper_fn=lambda x: np.array(x, dtype=np.int8))
+    extended = [
+        np.array([123, -1]),
+        np.array([-1, 0, 123, 92, 12])
+    ]
+    mmap.extend(extended)
+    assert np.allclose(mmap[3], extended[0])
+    assert np.allclose(mmap[4], extended[1])
+
+

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Union
+from typing import Union, Sequence
 
 import numpy as np
 
@@ -8,25 +8,36 @@ from mmap_ninja import numpy
 
 class RaggedMmap:
 
-    def __init__(self, data_file: Union[str, Path],
-                 starts,
-                 ends,
-                 shapes,
-                 flattened_shapes,
-                 wrapper_fn=None):
-        self.data_file = Path(data_file)
-        self.starts = starts
-        self.ends = ends
-        self.shapes = shapes
-        self.wrapper_fn = wrapper_fn
+    def __init__(self, out_dir: Union[str, Path],
+                 mode='r',
+                 wrapper_fn=None,
+                 starts_key='starts',
+                 ends_key='ends',
+                 shapes_key='shapes',
+                 flattened_shapes_key='flattened_shapes'):
+        out_dir = Path(out_dir)
+        out_dir.mkdir(exist_ok=True)
 
-        self.out_dir = data_file.parent
-        self.range = np.arange(len(starts), dtype=np.int32)
-        self.flattened_shapes = flattened_shapes
+        self.starts_key = starts_key
+        self.ends_key = ends_key
+        self.shapes_key = shapes_key
+        self.flattened_shapes_key = flattened_shapes_key
+
+        data_file = out_dir / 'data'
+        self.data_file = Path(data_file)
+
+        self.out_dir = out_dir
+        self.wrapper_fn = wrapper_fn
+        self.mode = mode
+
+        self.memmap = numpy.open_existing(self.out_dir, mode=self.mode)
+        self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode=self.mode)
+        self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode=self.mode)
+        self.shapes = numpy.open_existing(self.out_dir / self.shapes_key, mode=self.mode)
+        self.flattened_shapes = numpy.open_existing(self.out_dir / self.flattened_shapes_key, mode=self.mode)
+        self.range = np.arange(len(self.starts), dtype=np.int32)
         self.n = len(self.shapes)
         self.range = np.arange(self.n)
-
-        self.memmap = numpy.open_existing(self.out_dir, mode='r+')
 
     def get_multiple(self, item):
         indices = self.range[item]
@@ -66,49 +77,47 @@ class RaggedMmap:
             res = self.wrapper_fn(res)
         return res
 
-    @classmethod
-    def from_lists(cls, out_dir: Union[str, Path], lists, dtype=np.int64, wrapper_fn=None):
-        out_dir = Path(out_dir)
-        out_dir.mkdir(exist_ok=True)
-        offset = 0
-        starts = []
-        ends = []
-        shapes = []
-        arrs = []
-        flattened_shapes = []
-        for l in lists:
-            arr = np.asarray(l, dtype=dtype)
-            flattened = arr.ravel()
-            starts.append(offset)
-            ends.append(offset + len(flattened))
-            flattened_shapes.append(len(flattened))
-            shapes.append(arr.shape if len(arr.shape) > 0 else (0,))
-            arrs.append(flattened)
-            offset += len(flattened)
-        buffer = np.concatenate(arrs)
-        numpy.from_ndarray(np.array(starts, dtype=np.int32), out_dir / 'starts')
-        numpy.from_ndarray(np.array(ends, dtype=np.int32), out_dir / 'ends')
-        numpy.from_ndarray(np.array(shapes, dtype=np.int32), out_dir / 'shapes')
-        numpy.from_ndarray(np.array(flattened_shapes, dtype=np.int32), out_dir / 'flattened_shapes')
-        numpy.from_ndarray(np.array(buffer, dtype=dtype), out_dir)
-        return cls(data_file=out_dir / 'data.ninja',
-                   starts=starts,
-                   ends=ends,
-                   shapes=shapes,
-                   flattened_shapes=flattened_shapes,
-                   wrapper_fn=wrapper_fn)
+    def extend(self, arrays: Sequence[np.ndarray]):
+        numpy_bytes_slices = numpy.lists_of_ndarrays_to_bytes(arrays, self.memmap.dtype)
+        numpy.extend(self.memmap, numpy_bytes_slices.buffer)
+        end = self.ends[-1]
+        numpy.extend(self.starts, end + numpy_bytes_slices.starts)
+        numpy.extend(self.ends, end + numpy_bytes_slices.ends)
+        numpy.extend(self.flattened_shapes, numpy_bytes_slices.flattened_shapes)
+        numpy.extend(self.shapes, numpy_bytes_slices.shapes)
+
+        self.memmap = numpy.open_existing(self.out_dir, mode=self.mode)
+        self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode=self.mode)
+        self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode=self.mode)
+        self.shapes = numpy.open_existing(self.out_dir / self.shapes_key, mode=self.mode)
+        self.flattened_shapes = numpy.open_existing(self.out_dir / self.flattened_shapes_key, mode=self.mode)
+        self.range = np.arange(len(self.starts), dtype=np.int32)
+        self.n = len(self.shapes)
+        self.range = np.arange(self.n)
 
     @classmethod
-    def open_existing(cls, out_dir: Union[str, Path], wrapper_fn=None):
+    def from_lists(cls, out_dir: Union[str, Path], lists: Sequence[np.ndarray],
+                   dtype=np.int64,
+                   mode='r+',
+                   wrapper_fn=None,
+                   starts_key='starts',
+                   ends_key='ends',
+                   shapes_key='shapes',
+                   flattened_shapes_key='flattened_shapes'):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
-        starts = numpy.open_existing(out_dir / 'starts', mode='r')
-        ends = numpy.open_existing(out_dir / 'ends', mode='r')
-        shapes = numpy.open_existing(out_dir / 'shapes', mode='r')
-        flattened_shapes = numpy.open_existing(out_dir / 'flattened_shapes', mode='r')
-        return cls(data_file=out_dir / 'data',
-                   starts=starts,
-                   ends=ends,
-                   shapes=shapes,
-                   flattened_shapes=flattened_shapes,
-                   wrapper_fn=wrapper_fn)
+        numpy_bytes_slices = numpy.lists_of_ndarrays_to_bytes(lists, dtype)
+        numpy.from_ndarray(np.array(numpy_bytes_slices.starts, dtype=np.int32), out_dir / starts_key)
+        numpy.from_ndarray(np.array(numpy_bytes_slices.ends, dtype=np.int32), out_dir / ends_key)
+        numpy.from_ndarray(np.array(numpy_bytes_slices.shapes, dtype=np.int32), out_dir / shapes_key)
+        numpy.from_ndarray(np.array(numpy_bytes_slices.flattened_shapes, dtype=np.int32),
+                           out_dir / flattened_shapes_key)
+        numpy.from_ndarray(np.array(numpy_bytes_slices.buffer, dtype=dtype), out_dir)
+        return cls(out_dir=out_dir,
+                   wrapper_fn=wrapper_fn,
+                   mode=mode,
+                   starts_key=starts_key,
+                   ends_key=ends_key,
+                   shapes_key=shapes_key,
+                   flattened_shapes_key=flattened_shapes_key)
+

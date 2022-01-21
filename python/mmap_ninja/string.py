@@ -56,16 +56,16 @@ class StringsMmmap:
         self.file.close()
 
     def extend(self, list_of_strings: Sequence[str], verbose=False):
-        buffer, start_offsets, end_offsets = sequence_of_strings_to_bytes(list_of_strings, verbose=verbose)
+        bytes_slices = sequence_of_strings_to_bytes(list_of_strings, verbose=verbose)
         end = self.ends[-1]
-        start_offsets = end + start_offsets
-        end_offsets = end + end_offsets
+        start_offsets = end + bytes_slices.starts
+        end_offsets = end + bytes_slices.ends
         numpy.extend(self.starts, start_offsets)
         numpy.extend(self.ends, end_offsets)
         self.close()
         out_dir = self.data_file.parent
         with open(out_dir / 'data.ninja', 'ab') as data_file:
-            data_file.write(buffer)
+            data_file.write(bytes_slices.buffer)
             data_file.flush()
         self.starts = numpy.open_existing(out_dir / 'starts', mode='r')
         self.ends = numpy.open_existing(out_dir / 'ends', mode='r')
@@ -80,11 +80,11 @@ class StringsMmmap:
     def from_strings(cls, strings: Sequence[str], out_dir: Union[str, Path], verbose=False):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
-        buffer, starts, ends = sequence_of_strings_to_bytes(strings, verbose=verbose)
+        bytes_slices = sequence_of_strings_to_bytes(strings, verbose=verbose)
         with open(out_dir / 'data.ninja', "wb") as f:
-            f.write(buffer)
-        numpy.from_ndarray(np.array(starts, dtype=np.int32), out_dir / 'starts')
-        numpy.from_ndarray(np.array(ends, dtype=np.int32), out_dir / 'ends')
+            f.write(bytes_slices.buffer)
+        numpy.from_ndarray(np.array(bytes_slices.starts, dtype=np.int32), out_dir / 'starts')
+        numpy.from_ndarray(np.array(bytes_slices.ends, dtype=np.int32), out_dir / 'ends')
         return cls.open_existing(out_dir)
 
     @classmethod
@@ -116,9 +116,10 @@ class StringsMmmap:
         return memmap
 
     @classmethod
-    def open_existing(cls, out_dir: Union[str, Path], mode='r+b'):
+    def open_existing(cls, out_dir: Union[str, Path], mode='r+b',
+                      starts_key='starts', ends_key='ends'):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
-        starts_np = numpy.open_existing(out_dir / 'starts', mode='r')
-        ends_np = numpy.open_existing(out_dir / 'ends', mode='r')
+        starts_np = numpy.open_existing(out_dir / starts_key, mode='r')
+        ends_np = numpy.open_existing(out_dir / ends_key, mode='r')
         return cls(out_dir / 'data.ninja', starts_np, ends_np, mode=mode)
