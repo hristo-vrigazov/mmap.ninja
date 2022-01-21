@@ -4,7 +4,7 @@ from typing import Sequence, Union
 
 import numpy as np
 
-from mmap_ninja import numpy
+from mmap_ninja import numpy, base
 from mmap_ninja.base import bytes_to_str, str_to_bytes, sequence_of_strings_to_bytes
 
 
@@ -88,7 +88,8 @@ class StringsMmmap:
         self.extend([string])
 
     @classmethod
-    def from_strings(cls, strings: Sequence[str], out_dir: Union[str, Path],
+    def from_strings(cls, out_dir: Union[str, Path],
+                     strings: Sequence[str],
                      mode='r+b',
                      starts_key='starts',
                      ends_key='ends',
@@ -106,30 +107,15 @@ class StringsMmmap:
                    ends_key=ends_key)
 
     @classmethod
-    def from_generator(cls, sample_generator,
-                       out_dir: Union[str, Path],
+    def from_generator(cls, out_dir: Union[str, Path],
+                       sample_generator,
                        batch_size: int,
-                       verbose=False):
-        out_dir = Path(out_dir)
-        out_dir.mkdir(exist_ok=True)
-        samples = []
-        memmap = None
-        if verbose:
-            from tqdm import tqdm
-            sample_generator = tqdm(sample_generator)
-        for sample in sample_generator:
-            samples.append(sample)
-            if len(samples) % batch_size != 0:
-                continue
-            if memmap is None:
-                memmap = cls.from_strings(samples, out_dir)
-            else:
-                memmap.extend(samples)
-            samples = []
-        if len(samples) > 0:
-            if memmap is None:
-                memmap = cls.from_strings(samples, out_dir)
-            else:
-                memmap.extend(samples)
-        return memmap
+                       verbose=False,
+                       **kwargs):
+        return base.from_generator_base(out_dir=out_dir,
+                                        sample_generator=sample_generator,
+                                        batch_size=batch_size,
+                                        verbose=verbose,
+                                        batch_ctor=cls.from_strings,
+                                        **kwargs)
 

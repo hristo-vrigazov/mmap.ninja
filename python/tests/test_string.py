@@ -13,7 +13,7 @@ def test_base_case(tmp_path):
         'popo'
     ]
 
-    memmap = StringsMmmap.from_strings(list_of_strings, tmp_path / 'strings_memmap', verbose=True)
+    memmap = StringsMmmap.from_strings(tmp_path / 'strings_memmap', list_of_strings, verbose=True)
     for i, string in enumerate(list_of_strings):
         assert string == memmap[i]
     memmap[:2] = ['Korbo', 'Moiler']
@@ -33,7 +33,7 @@ def test_open_existing(tmp_path):
         'popo'
     ]
 
-    memmap = StringsMmmap.from_strings(list_of_strings, tmp_path / 'strings_memmap', verbose=True)
+    memmap = StringsMmmap.from_strings(tmp_path / 'strings_memmap', list_of_strings, verbose=True)
     memmap = StringsMmmap(tmp_path / 'strings_memmap')
     for i, string in enumerate(list_of_strings):
         assert string == memmap[i]
@@ -54,7 +54,7 @@ def test_extend(tmp_path):
         'popo'
     ]
 
-    memmap = StringsMmmap.from_strings(list_of_strings, tmp_path / 'strings_memmap')
+    memmap = StringsMmmap.from_strings(tmp_path / 'strings_memmap', list_of_strings)
     memmap.extend(['new', 'new2', 'uga dunga'])
     assert len(memmap) == 9
     assert memmap[-1] == 'uga dunga'
@@ -72,7 +72,7 @@ def test_append(tmp_path):
         'popo'
     ]
 
-    memmap = StringsMmmap.from_strings(list_of_strings, tmp_path / 'strings_memmap')
+    memmap = StringsMmmap.from_strings(tmp_path / 'strings_memmap', list_of_strings)
     memmap.append('new')
     assert len(memmap) == 7
     assert memmap[-1] == 'new'
@@ -85,6 +85,6 @@ def generate_strs(n):
 
 @pytest.mark.parametrize("n", [30, 3])
 def test_from_generator(tmp_path, n):
-    memmap = StringsMmmap.from_generator(generate_strs(n), tmp_path / 'strings_memmap', 4, verbose=True)
+    memmap = StringsMmmap.from_generator(tmp_path / 'strings_memmap', generate_strs(n), 4, verbose=True)
     for i in range(n):
         assert str(i) == memmap[i]

@@ -3,7 +3,7 @@ from typing import Union, Sequence
 
 import numpy as np
 
-from mmap_ninja import numpy
+from mmap_ninja import numpy, base
 
 
 class RaggedMmap:
@@ -121,3 +121,15 @@ class RaggedMmap:
                    shapes_key=shapes_key,
                    flattened_shapes_key=flattened_shapes_key)
 
+    @classmethod
+    def from_generator(cls, sample_generator,
+                       out_dir: Union[str, Path],
+                       batch_size: int,
+                       verbose=False,
+                       **kwargs):
+        return base.from_generator_base(sample_generator=sample_generator,
+                                        out_dir=out_dir,
+                                        batch_size=batch_size,
+                                        verbose=verbose,
+                                        batch_ctor=cls.from_lists,
+                                        **kwargs)
