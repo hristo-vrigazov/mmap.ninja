@@ -114,7 +114,7 @@ class RaggedMmap:
 
     @classmethod
     def from_lists(cls, out_dir: Union[str, Path], lists: Sequence[np.ndarray],
-                   dtype=np.int64,
+                   dtype=None,
                    mode='r+',
                    wrapper_fn=None,
                    starts_key='starts',
@@ -132,9 +132,8 @@ class RaggedMmap:
             numpy.from_ndarray(out_dir / shapes_key, numpy_bytes_slices.shapes)
         else:
             RaggedMmap.from_lists(out_dir / shapes_key, numpy_bytes_slices.shapes)
-        numpy.from_ndarray(out_dir / flattened_shapes_key,
-                           np.array(numpy_bytes_slices.flattened_shapes, dtype=np.int64))
-        numpy.from_ndarray(out_dir, np.array(numpy_bytes_slices.buffer, dtype=dtype))
+        numpy.from_ndarray(out_dir / flattened_shapes_key, np.array(numpy_bytes_slices.flattened_shapes, dtype=np.int64))
+        numpy.from_ndarray(out_dir, np.array(numpy_bytes_slices.buffer))
         return cls(out_dir=out_dir,
                    wrapper_fn=wrapper_fn,
                    mode=mode,

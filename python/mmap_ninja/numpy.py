@@ -144,7 +144,11 @@ def lists_of_ndarrays_to_bytes(lists: Sequence[np.ndarray], dtype):
     arrs = []
     flattened_shapes = []
     for l in lists:
-        arr = np.asarray(l, dtype=dtype)
+        if dtype is None:
+            arr = np.asarray(l)
+            dtype = arr.dtype
+        else:
+            arr = np.asarray(l, dtype=dtype)
         flattened = arr.ravel()
         starts.append(offset)
         ends.append(offset + len(flattened))
