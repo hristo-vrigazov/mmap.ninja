@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from mmap_ninja.ragged import RaggedMmap
 
@@ -90,7 +91,7 @@ def test_extend(tmp_path):
         np.array([2, 3, 4, 19]),
         np.array([90, 12])
     ]
-    mmap = RaggedMmap.from_lists(tmp_path / 'base', simple, wrapper_fn=lambda x: np.array(x, dtype=np.int8))
+    mmap = RaggedMmap.from_lists(tmp_path / 'base', simple, wrapper_fn=lambda x: np.array(x, dtype=np.int16))
     extended = [
         np.array([123, -1]),
         np.array([-1, 0, 123, 92, 12])
@@ -98,5 +99,19 @@ def test_extend(tmp_path):
     mmap.extend(extended)
     assert np.allclose(mmap[3], extended[0])
     assert np.allclose(mmap[4], extended[1])
+    new_arr = np.array([-1, -2, 628])
+    mmap.append(new_arr)
+    assert np.allclose(mmap[5], new_arr)
 
+
+def generate_arrs(n):
+    for i in range(n):
+        yield np.ones(12) * i
+
+
+@pytest.mark.parametrize("n", [30, 3])
+def test_from_generator(tmp_path, n):
+    memmap = RaggedMmap.from_generator(tmp_path / 'strings_memmap', generate_arrs(n), 4, verbose=True)
+    for i in range(n):
+        assert np.allclose(np.ones(12) * i, memmap[i])
 

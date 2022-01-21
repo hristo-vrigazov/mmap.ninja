@@ -77,6 +77,9 @@ class RaggedMmap:
             res = self.wrapper_fn(res)
         return res
 
+    def append(self, array: np.ndarray):
+        self.extend([array])
+
     def extend(self, arrays: Sequence[np.ndarray]):
         numpy_bytes_slices = numpy.lists_of_ndarrays_to_bytes(arrays, self.memmap.dtype)
         numpy.extend(self.memmap, numpy_bytes_slices.buffer)
@@ -103,9 +106,12 @@ class RaggedMmap:
                    starts_key='starts',
                    ends_key='ends',
                    shapes_key='shapes',
-                   flattened_shapes_key='flattened_shapes'):
+                   flattened_shapes_key='flattened_shapes',
+                   verbose=False):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
+        if verbose:
+            print('Creating from list of ndarrays ...')
         numpy_bytes_slices = numpy.lists_of_ndarrays_to_bytes(lists, dtype)
         numpy.from_ndarray(np.array(numpy_bytes_slices.starts, dtype=np.int32), out_dir / starts_key)
         numpy.from_ndarray(np.array(numpy_bytes_slices.ends, dtype=np.int32), out_dir / ends_key)
@@ -113,6 +119,8 @@ class RaggedMmap:
         numpy.from_ndarray(np.array(numpy_bytes_slices.flattened_shapes, dtype=np.int32),
                            out_dir / flattened_shapes_key)
         numpy.from_ndarray(np.array(numpy_bytes_slices.buffer, dtype=dtype), out_dir)
+        if verbose:
+            print('Done creating from list of ndarrays.')
         return cls(out_dir=out_dir,
                    wrapper_fn=wrapper_fn,
                    mode=mode,
@@ -122,13 +130,13 @@ class RaggedMmap:
                    flattened_shapes_key=flattened_shapes_key)
 
     @classmethod
-    def from_generator(cls, sample_generator,
-                       out_dir: Union[str, Path],
+    def from_generator(cls, out_dir: Union[str, Path],
+                       sample_generator,
                        batch_size: int,
                        verbose=False,
                        **kwargs):
-        return base.from_generator_base(sample_generator=sample_generator,
-                                        out_dir=out_dir,
+        return base.from_generator_base(out_dir=out_dir,
+                                        sample_generator=sample_generator,
                                         batch_size=batch_size,
                                         verbose=verbose,
                                         batch_ctor=cls.from_lists,
