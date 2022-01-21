@@ -144,3 +144,16 @@ def test_different_number_of_axes(tmp_path):
     mmap = RaggedMmap.from_lists(tmp_path / 'base', simple, wrapper_fn=lambda x: np.array(x, dtype=np.int16))
     assert np.allclose(mmap[-1], simple[-1])
 
+
+def test_different_number_of_axes_gen(tmp_path):
+    simple = [
+        np.array([
+            [11, 13],
+            [-1, 17]
+        ]),
+        np.array([2, 3]),
+        np.array([[90], [12]])
+    ]
+    mmap = RaggedMmap.from_generator(tmp_path / 'base', simple, batch_size=1)
+    assert np.allclose(mmap[-1], simple[-1])
+
