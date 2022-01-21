@@ -71,8 +71,10 @@ class RaggedMmap:
         end = self.ends[item]
         shape = self.shapes[item]
         res = self.memmap[start:end]
-        if shape == (0,):
+        if tuple(shape) == (0,):
             res = np.asscalar(res)
+        else:
+            res = res.reshape(shape)
         if self.wrapper_fn is not None:
             res = self.wrapper_fn(res)
         return res

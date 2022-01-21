@@ -115,3 +115,18 @@ def test_from_generator(tmp_path, n):
     for i in range(n):
         assert np.allclose(np.ones(12) * i, memmap[i])
 
+
+def test_nd_case(tmp_path):
+    simple = [
+        np.array([
+            [11, 13],
+            [-1, 17]
+        ]),
+        np.array([
+            [2, 3],
+            [4, 19]
+        ]),
+        np.array([[90], [12]])
+    ]
+    mmap = RaggedMmap.from_lists(tmp_path / 'base', simple, wrapper_fn=lambda x: np.array(x, dtype=np.int16))
+    assert np.allclose(mmap[-1], simple[-1])
