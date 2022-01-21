@@ -25,7 +25,7 @@ class StringsMmmap:
 
         self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode='r')
         self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode='r')
-        self.range = np.arange(len(self.starts), dtype=np.int32)
+        self.range = np.arange(len(self.starts), dtype=np.int64)
         self.file = open(data_file, mode=mode)
         self.buffer = mmap.mmap(self.file.fileno(), 0)
 
@@ -80,7 +80,7 @@ class StringsMmmap:
 
         self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode='r')
         self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode='r')
-        self.range = np.arange(len(self.starts), dtype=np.int32)
+        self.range = np.arange(len(self.starts), dtype=np.int64)
         self.file = open(self.data_file, mode=self.mode)
         self.buffer = mmap.mmap(self.file.fileno(), 0)
 
@@ -99,8 +99,8 @@ class StringsMmmap:
         bytes_slices = sequence_of_strings_to_bytes(strings, verbose=verbose)
         with open(out_dir / 'data.ninja', "wb") as f:
             f.write(bytes_slices.buffer)
-        numpy.from_ndarray(out_dir / 'starts', np.array(bytes_slices.starts, dtype=np.int32))
-        numpy.from_ndarray(out_dir / 'ends', np.array(bytes_slices.ends, dtype=np.int32))
+        numpy.from_ndarray(out_dir / starts_key, np.array(bytes_slices.starts, dtype=np.int64))
+        numpy.from_ndarray(out_dir / ends_key, np.array(bytes_slices.ends, dtype=np.int64))
         return cls(out_dir,
                    mode=mode,
                    starts_key=starts_key,

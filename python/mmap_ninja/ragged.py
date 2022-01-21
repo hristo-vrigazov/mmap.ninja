@@ -46,7 +46,7 @@ class RaggedMmap:
         self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode=self.mode)
         self.shapes = self.shapes_ctor(self.out_dir / self.shapes_key, mode=self.mode)
         self.flattened_shapes = numpy.open_existing(self.out_dir / self.flattened_shapes_key, mode=self.mode)
-        self.range = np.arange(len(self.starts), dtype=np.int32)
+        self.range = np.arange(len(self.starts), dtype=np.int64)
         self.n = len(self.shapes)
         self.range = np.arange(self.n)
         self.shapes_extension_fn = np_shape_extend if self.shapes_are_flat else ragged_shape_extend
@@ -108,7 +108,7 @@ class RaggedMmap:
         self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode=self.mode)
         self.shapes = self.shapes_ctor(self.out_dir / self.shapes_key, mode=self.mode)
         self.flattened_shapes = numpy.open_existing(self.out_dir / self.flattened_shapes_key, mode=self.mode)
-        self.range = np.arange(len(self.starts), dtype=np.int32)
+        self.range = np.arange(len(self.starts), dtype=np.int64)
         self.n = len(self.shapes)
         self.range = np.arange(self.n)
 
@@ -120,15 +120,12 @@ class RaggedMmap:
                    starts_key='starts',
                    ends_key='ends',
                    shapes_key='shapes',
-                   flattened_shapes_key='flattened_shapes',
-                   verbose=False):
+                   flattened_shapes_key='flattened_shapes'):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
-        if verbose:
-            print('Creating from list of ndarrays ...')
         numpy_bytes_slices = numpy.lists_of_ndarrays_to_bytes(lists, dtype)
-        numpy.from_ndarray(out_dir / starts_key, np.array(numpy_bytes_slices.starts, dtype=np.int32))
-        numpy.from_ndarray(out_dir / ends_key, np.array(numpy_bytes_slices.ends, dtype=np.int32))
+        numpy.from_ndarray(out_dir / starts_key, np.array(numpy_bytes_slices.starts, dtype=np.int64))
+        numpy.from_ndarray(out_dir / ends_key, np.array(numpy_bytes_slices.ends, dtype=np.int64))
         shapes_are_flat = all([len(shape) == 1 for shape in numpy_bytes_slices.shapes])
         base.int32_to_file(int(shapes_are_flat), out_dir / 'shapes_are_flat.ninja')
         if shapes_are_flat:
@@ -136,10 +133,8 @@ class RaggedMmap:
         else:
             RaggedMmap.from_lists(out_dir / shapes_key, numpy_bytes_slices.shapes)
         numpy.from_ndarray(out_dir / flattened_shapes_key,
-                           np.array(numpy_bytes_slices.flattened_shapes, dtype=np.int32))
+                           np.array(numpy_bytes_slices.flattened_shapes, dtype=np.int64))
         numpy.from_ndarray(out_dir, np.array(numpy_bytes_slices.buffer, dtype=dtype))
-        if verbose:
-            print('Done creating from list of ndarrays.')
         return cls(out_dir=out_dir,
                    wrapper_fn=wrapper_fn,
                    mode=mode,
