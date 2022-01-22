@@ -64,8 +64,8 @@ Once created, you can open the map by simply supplying the path to the memory ma
 ```python
 from mmap_ninja.ragged import RaggedMmap
 
-training_images = RaggedMmap('val_images')
-print(training_images[3]) # Prints the ndarray image, e.g. with shape (387, 640, 3)
+val_images = RaggedMmap('val_images')
+print(val_images[3]) # Prints the ndarray image, e.g. with shape (387, 640, 3)
 ```
 
 You can also extend an already existing memory map easily by using the `.extend` method.
