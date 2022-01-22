@@ -21,10 +21,16 @@ setup(
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Operating System :: OS Independent"
     ],
-    packages=find_packages(exclude=("tests",)),
+    packages=find_packages(exclude=("tests",
+                                    "benchmark_images.py")),
     include_package_data=True,
     install_requires=["numpy"],
 )

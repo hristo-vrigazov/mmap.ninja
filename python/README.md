@@ -6,7 +6,7 @@
 
 ### Memory mapping images with different shapes
 
-Create a memory map from generator, flushed with batches (so that you don't have to keep it all in memory at once):
+Create a memory map from generator, flushing to disk every 1024 images (so that you don't have to keep it all in memory at once):
 
 ```python
 import matplotlib.pyplot as plt
@@ -28,7 +28,14 @@ training_images = RaggedMmap('val_images')
 print(training_images[3]) # Prints the ndarray image, e.g. with shape (387, 640, 3)
 ```
 
-You can also extend
+You can also extend an already existing memory map easily by using the `.extend` method.
+
+In the table show the time needed for initial loading, one iteration over the COCO validation 2017 dataset,
+the memory usage of every method and the disk usage.
+You can see that once created, the `RaggedMmmap` is **383 times** faster for iterating over the 
+dataset.
+It does require 4 times more disk space though, so if you are willing to trade 4 times more disk space
+for **383 times** speedup, you can use the `RaggedMmap`.
 
 |                  |   Initial load (s) |   Time for iteration (s) | Memory usage (GB)   | Disk usage (GB)   |
 |:-----------------|-------------------:|-------------------------:|:--------------------|:------------------|
