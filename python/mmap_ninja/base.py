@@ -110,3 +110,16 @@ def from_generator_base(sample_generator, out_dir, batch_size, batch_ctor, **kwa
         else:
             memmap.extend(samples)
     return memmap
+
+
+class Wrapped:
+
+    def __init__(self, data, wrapper_fn):
+        self.data = data
+        self.wrapper_fn = wrapper_fn
+
+    def __getitem__(self, item):
+        return self.wrapper_fn(self.data[item])
+
+    def __len__(self):
+        return len(self.data)
