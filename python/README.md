@@ -9,18 +9,20 @@ Once it's created, you can open it by just supplying the path to the memory map.
 An example of creating a memory map for the [sklearn's 20newsgroups dataset](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_20newsgroups.html):
 
 ```python
-from mmap_ninja.string import StringsMmmap
+from mmap_ninja.string import StringsMmap
 from sklearn.datasets import fetch_20newsgroups
 
 data = fetch_20newsgroups()
-memmap = StringsMmmap.from_strings('20newsgroups', data['data'], verbose=True)
+memmap = StringsMmap.from_strings('20newsgroups', data['data'], verbose=True)
 ```
 
 Opening an already existing `StringsMmmap`:
+
 ```python
-from mmap_ninja.string import StringsMmmap
-texts = StringsMmmap('20newsgroups')
-print(texts[123]) # Prints the 123-th text
+from mmap_ninja.string import StringsMmap
+
+texts = StringsMmap('20newsgroups')
+print(texts[123])  # Prints the 123-th text
 ```
 
 You can also extend an already existing memory map easily by using the `.extend` method.

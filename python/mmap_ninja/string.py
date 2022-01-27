@@ -8,7 +8,7 @@ from mmap_ninja import numpy, base
 from mmap_ninja.base import bytes_to_str, str_to_bytes, sequence_of_strings_to_bytes
 
 
-class StringsMmmap:
+class StringsMmap:
 
     def __init__(self, out_dir: Union[str, Path],
                  mode='r+b',
