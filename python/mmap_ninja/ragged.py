@@ -84,7 +84,7 @@ class RaggedMmap:
         shape = self.shapes[item]
         res = self.memmap[start:end]
         if self.shapes_are_flat and shape[0] == 0:
-            res = np.asscalar(res)
+            res = res.item()
         else:
             res = res.reshape(shape)
         if self.wrapper_fn is not None:
