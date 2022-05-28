@@ -6,6 +6,6 @@ python:
   - 3.8
 install:
   - pip install -r python/requirements.txt
-  - pip install python/
 script:
-  - pytest python/
+  - export PYTHONPATH=$PYTHONPATH:$(realpath python/)
+  - pytest --cov --cov-report xml python/
