@@ -27,5 +27,8 @@ A directory of `.jpg` files - very popular (no need to do anything).
 Pros and cons:
 
 :heavy_plus_sign: No need to do additional work after downloading the dataset
+
 :heavy_plus_sign: Can open a random image from the dataset easily based on its filename
+
 :heavy_minus_sign: It's very slow :hourglass_flowing_sand:
+
