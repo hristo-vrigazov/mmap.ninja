@@ -12,7 +12,7 @@ Accelerate your machine learning training by up to **400 times** !
 `mmap_ninja` is a library for storing your datasets in memory-mapped files,
 which leads to a dramatic speedup in the training time.
 
-The only dependency is `numpy`.
+The only dependencies are `numpy` and `tqdm`.
 
 ## What is it?
 

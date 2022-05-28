@@ -32,5 +32,5 @@ setup(
     packages=find_packages(exclude=("tests",
                                     "benchmark_images.py")),
     include_package_data=True,
-    install_requires=["numpy"],
+    install_requires=["numpy", "tqdm"],
 )
