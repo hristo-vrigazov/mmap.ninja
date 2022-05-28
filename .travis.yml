@@ -1,0 +1,14 @@
+language: python
+# ===== Linux ======
+os: linux
+dist: bionic
+python:
+  - 2.7
+  - 3.6
+  - 3.7
+  - 3.8
+  - 3.9
+install:
+  - pip install -r python/requirements.txt
+script:
+  - pytest python/
