@@ -24,12 +24,8 @@ How would you store the images? You have several options:
 
 A directory of `.jpg` files - very popular (no need to do anything).
 
-Pros: :heavy_plus_sign:
+Pros and cons:
 
-- No need to do additional work after downloading the dataset
-- Can open a random image from the dataset easily based on its filename
-
-Cons:
-
-2. Load them in memory at the start of the training - very slow startup, also you need A LOT OF memory.
-3. Store them as `.npy` files - but what do we do with the different shapes of the images?
+:heavy_plus_sign: No need to do additional work after downloading the dataset
+:heavy_plus_sign: Can open a random image from the dataset easily based on its filename
+:heavy_minus_sign: It's very slow :hourglass_flowing_sand:
