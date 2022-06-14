@@ -33,9 +33,10 @@ datasets, reducing the time needed for training.
 
 ## Use cases
 
-| Use case                | Initialize                                                       |
-|:------------------------|:-----------------------------------------------------------------|
-| I have an image dataset | [Markdown example](#memory-mapping-images-with-different-shapes) |
+| Use case                | Notebook                                                                                                                                                             | Markdown                                                         |
+|:------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------|
+| I have an image dataset | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [Markdown example](#memory-mapping-images-with-different-shapes) |
+
 ### Memory mapping images with different shapes
 
 You can create a new `RaggedMmmap` from one of its class methods: `RaggedMmmap.from_lists`, 
