@@ -1,3 +1,5 @@
+import numpy as np
+
 from mmap_ninja import base
 
 
@@ -36,3 +38,11 @@ def test_shape_file(tmp_path):
     base.shape_to_file(shape, file)
     assert shape == base.file_to_shape(file)
 
+
+def test_wrapper():
+    arr = np.array([1, 2, 3])
+    wrapped = base.Wrapped(arr, lambda x: -x)
+    assert wrapped[0] == -1
+    assert wrapped[1] == -2
+    assert wrapped[2] == -3
+    assert len(wrapped) == 3
