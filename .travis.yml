@@ -10,4 +10,4 @@ install:
 script:
   - export PYTHONPATH=$PYTHONPATH:$(realpath python/)
   - pytest --cov --cov-report xml python/
-  - bash <(curl -s https://codecov.io/bash)
+  - curl -Os https://uploader.codecov.io/latest/linux/codecov && chmod +x codecov && ./codecov
