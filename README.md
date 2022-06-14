@@ -31,11 +31,14 @@ However, a large portion of the training time actually consists of just iteratin
 This library, `mmap_ninja` provides high-level, easy to use, well tested API for using memory maps for your 
 datasets, reducing the time needed for training.
 
+Memory maps would usually take a little more disk space though, so if you are willing to trade some disk space
+for fast filesystem to memory I/O, this is your library!
+
 ## Use cases
 
-| Use case            | Notebook                                                                                                                                                             | Example                                                 | Class/Module                               |
-|:--------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------|:-------------------------------------------|
-| List of image files | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [Example](#memory-mapping-images-with-different-shapes) | `from mmap_ninja.ragged import RaggedMmap` |
+| Use case            | Notebook                                                                                                                                                             | Benchmark                                                 | Class/Module                               |
+|:--------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------|:-------------------------------------------|
+| List of image files | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [COCO 2017](#memory-mapping-images-with-different-shapes) | `from mmap_ninja.ragged import RaggedMmap` |
 
 ### Memory mapping images with different shapes
 
@@ -50,10 +53,12 @@ from mmap_ninja.ragged import RaggedMmap
 from pathlib import Path
 
 coco_path = Path('/home/hvrigazov/data/coco/val2017')
-val_images = RaggedMmap.from_generator('val_images', 
-                                       map(plt.imread, coco_path.iterdir()), 
-                                       batch_size=1024, 
-                                       verbose=True)
+val_images = RaggedMmap.from_generator(
+    out_dir='val_images', 
+    sample_generator=map(plt.imread, coco_path.iterdir()), 
+    batch_size=1024, 
+    verbose=True
+)
 ```
 
 Once created, you can open the map by simply supplying the path to the memory map:
