@@ -52,7 +52,7 @@ import matplotlib.pyplot as plt
 from mmap_ninja.ragged import RaggedMmap
 from pathlib import Path
 
-coco_path = Path('/home/hvrigazov/data/coco/val2017')
+coco_path = Path('<PATH TO IMAGE DATASET>')
 val_images = RaggedMmap.from_generator(
     out_dir='val_images', 
     sample_generator=map(plt.imread, coco_path.iterdir()), 
