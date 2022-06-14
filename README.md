@@ -15,7 +15,7 @@ pip install mmap_ninja
 [![PyPi version](https://badgen.net/pypi/v/mmap_ninja/)](https://pypi.com/project/mmap_ninja)
 [![PyPI license](https://img.shields.io/pypi/l/mmap_ninja.svg)](https://pypi.python.org/pypi/mmap_ninja/)
 
-Accelerate the iteration over your machine learning dataset by up to **400 times** !
+Accelerate the iteration over your machine learning dataset by up to **20 times** !
 
 `mmap_ninja` is a library for storing your datasets in memory-mapped files,
 which leads to a dramatic speedup in the training time.
