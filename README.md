@@ -44,3 +44,4 @@ Pros and cons:
 :heavy_minus_sign: It's super slow :hourglass_flowing_sand:. Like, really, 
 really slow and you waste all that time on every epoch, on every model you train!
 
+More information is coming soon!
