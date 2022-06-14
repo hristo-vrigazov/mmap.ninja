@@ -33,10 +33,9 @@ datasets, reducing the time needed for training.
 
 ## Use cases
 
-|    | Use case                | Initialize                                         |
-|---:|:------------------------|:---------------------------------------------------|
-|  0 | I have an image dataset | [Markdown example](#memory-mapping-text-documents) |
-
+| Use case                | Initialize                                                       |
+|:------------------------|:-----------------------------------------------------------------|
+| I have an image dataset | [Markdown example](#memory-mapping-images-with-different-shapes) |
 ### Memory mapping images with different shapes
 
 You can create a new `RaggedMmmap` from one of its class methods: `RaggedMmmap.from_lists`, 
