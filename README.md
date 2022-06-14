@@ -23,6 +23,9 @@ which leads to a dramatic speedup in the training time.
 
 The only dependencies are `numpy` and `tqdm`.
 
+You can use `mmap_ninja` with any training framework (such as `Tensorflow`, `PyTorch`, `MxNet`), etc.,
+as it stores your dataset as a memory-mapped numpy array.
+
 ## What is it?
 
 When working on a machine learning project, one of the most time-consuming parts is the model's training.
@@ -81,12 +84,12 @@ the memory usage of every method and the disk usage.
 | ragged_mmap      |           0.002054 |                 0.057858 | 0.001144 GB         | 3.819114 GB       |
 | imread_from_disk |           0.000000 |                22.208385 | 0.001144 GB         | 0.758753 GB       |
 
-You can see that once created, the `RaggedMmmap` is **383 times** faster for iterating over the 
+You can see that once created, the `RaggedMmap` is **383 times** faster for iterating over the 
 dataset.
 It does require 4 times more disk space though, so if you are willing to trade 4 times more disk space
 for **383 times** speedup (and less memory usage), you definitely should use the `RaggedMmap`!
 
-This makes the `RaggedMmmap` a fantastic choice for your computer vision, image-based machine learning datasets!
+This makes the `RaggedMmap` a fantastic choice for your computer vision, image-based machine learning datasets!
 
 
 [//]: # (### Directory of jpg files)
