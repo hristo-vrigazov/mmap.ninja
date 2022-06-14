@@ -28,21 +28,58 @@ as it stores your dataset as a memory-mapped numpy array.
 
 ## What is it?
 
+A **memory mapped file** is a file that is physically present on disk in a way that the correlation between the file
+and the memory space permits applications to treat the mapped portions as if it were primary memory, allowing very fast
+I/O!
+
 When working on a machine learning project, one of the most time-consuming parts is the model's training.
 However, a large portion of the training time actually consists of just iterating over your dataset and filesystem I/O!
 
 This library, `mmap_ninja` provides high-level, easy to use, well tested API for using memory maps for your 
 datasets, reducing the time needed for training.
 
+
 Memory maps would usually take a little more disk space though, so if you are willing to trade some disk space
 for fast filesystem to memory I/O, this is your library!
 
+All memory map classes are initialized first (once per project) - usually this is done
+from a generator or an in-memory object (check the [use cases](#use-cases)).
+
+For example, the classmethod for creating a `RaggedMmap` from a generator looks like this:
+
+```python
+@classmethod
+def from_generator(
+        cls,
+        out_dir: Union[str, Path],
+        sample_generator,
+        batch_size: int,
+        verbose=False,
+        **kwargs
+):
+```
+
+where `out_dir` is the directory to persist the memory map, the `samples_generator` is the generator
+of the samples (duh), and `batch_size` is the maximum number of samples to be kept at once in memory
+before flushing to disk. `verbose` either shows a progress bar or does not.
+
+Once created, they provide the following highly performant methods:
+
+```python
+
+def __getitem__(self, item):
+def __len__(self):
+def append(self, array: np.ndarray):
+def extend(self, arrays: Sequence[np.ndarray]):
+```
+
 ## Use cases
 
-| Use case            | Notebook                                                                                                                                                             | Benchmark                                                 | Class/Module                                |
-|:--------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------|:--------------------------------------------|
-| List of image files | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [COCO 2017](#memory-mapping-images-with-different-shapes) | `from mmap_ninja.ragged import RaggedMmap`  |
-| List of text files  | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18bEwylFwx4owMpb-RAkJZS_9JrrUcFd7?usp=sharing) | [20 newsgroups](#memory-mapping-text-documents)           | `from mmap_ninja.string import StringsMmap` |
+| Use case                 | Notebook                                                                                                                                                             | Benchmark                                                 | Class/Module                                |
+|:-------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------|:--------------------------------------------|
+| List of image files      | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [COCO 2017](#memory-mapping-images-with-different-shapes) | `from mmap_ninja.ragged import RaggedMmap`  |
+| List of text files       | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18bEwylFwx4owMpb-RAkJZS_9JrrUcFd7?usp=sharing) | [20 newsgroups](#memory-mapping-text-documents)           | `from mmap_ninja.string import StringsMmap` |
+| Flat array (e.g. labels) | Coming soon!                                                                                                                                                         | Coming soon!                                              | `from mmap_ninja import numpy as np_ninja`   |
 
 ### Memory mapping images with different shapes
 

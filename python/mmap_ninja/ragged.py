@@ -113,14 +113,18 @@ class RaggedMmap:
         self.range = np.arange(self.n)
 
     @classmethod
-    def from_lists(cls, out_dir: Union[str, Path], lists: Sequence[np.ndarray],
-                   dtype=None,
-                   mode='r+',
-                   wrapper_fn=None,
-                   starts_key='starts',
-                   ends_key='ends',
-                   shapes_key='shapes',
-                   flattened_shapes_key='flattened_shapes'):
+    def from_lists(
+            cls,
+            out_dir: Union[str, Path],
+            lists: Sequence[np.ndarray],
+            dtype=None,
+            mode='r+',
+            wrapper_fn=None,
+            starts_key='starts',
+            ends_key='ends',
+            shapes_key='shapes',
+            flattened_shapes_key='flattened_shapes'
+    ):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
         numpy_bytes_slices = numpy.lists_of_ndarrays_to_bytes(lists, dtype)
@@ -132,7 +136,8 @@ class RaggedMmap:
             numpy.from_ndarray(out_dir / shapes_key, numpy_bytes_slices.shapes)
         else:
             RaggedMmap.from_lists(out_dir / shapes_key, numpy_bytes_slices.shapes)
-        numpy.from_ndarray(out_dir / flattened_shapes_key, np.array(numpy_bytes_slices.flattened_shapes, dtype=np.int64))
+        numpy.from_ndarray(out_dir / flattened_shapes_key,
+                           np.array(numpy_bytes_slices.flattened_shapes, dtype=np.int64))
         numpy.from_ndarray(out_dir, np.array(numpy_bytes_slices.buffer))
         return cls(out_dir=out_dir,
                    wrapper_fn=wrapper_fn,
@@ -143,11 +148,14 @@ class RaggedMmap:
                    flattened_shapes_key=flattened_shapes_key)
 
     @classmethod
-    def from_generator(cls, out_dir: Union[str, Path],
-                       sample_generator,
-                       batch_size: int,
-                       verbose=False,
-                       **kwargs):
+    def from_generator(
+            cls,
+            out_dir: Union[str, Path],
+            sample_generator,
+            batch_size: int,
+            verbose=False,
+            **kwargs
+    ):
         return base.from_generator_base(out_dir=out_dir,
                                         sample_generator=sample_generator,
                                         batch_size=batch_size,
