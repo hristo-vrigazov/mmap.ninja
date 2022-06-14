@@ -33,9 +33,9 @@ datasets, reducing the time needed for training.
 
 ## Use cases
 
-| Use case                | Notebook                                                                                                                                                             | Markdown                                                         |
-|:------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------|
-| I have an image dataset | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [Markdown example](#memory-mapping-images-with-different-shapes) |
+| Use case            | Notebook                                                                                                                                                             | Example                                                 | Class/Module                               |
+|:--------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------|:-------------------------------------------|
+| List of image files | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [Example](#memory-mapping-images-with-different-shapes) | `from mmap_ninja.ragged import RaggedMmap` |
 
 ### Memory mapping images with different shapes
 
