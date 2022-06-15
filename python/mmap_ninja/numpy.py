@@ -8,20 +8,27 @@ import numpy as np
 from mmap_ninja import base
 
 
+def mkdir(out_dir: Union[str, Path]) -> Path:
+    """
+    A helper mkdir that creates the directory if it doesn't exist.
+    Returns the path to the directory.created.
+    """
+    out_dir = Path(out_dir)
+    out_dir.mkdir(exist_ok=True, parents=True)
+    return out_dir
+
 def save_mmap_kwargs(out_dir: Path,
                      dtype,
                      shape,
                      order):
-    out_dir = Path(out_dir)
-    out_dir.mkdir(exist_ok=True)
+    out_dir = mkdir(out_dir)
     base.str_to_file(np.dtype(dtype).name, out_dir / f'dtype.ninja')
     base.shape_to_file(shape, out_dir / f'shape.ninja')
     base.str_to_file(order, out_dir / f'order.ninja')
 
 
 def read_mmap_kwargs(out_dir: Path):
-    out_dir = Path(out_dir)
-    out_dir.mkdir(exist_ok=True)
+    out_dir = mkdir(out_dir)
     return {
         'dtype': base.file_to_str(out_dir / 'dtype.ninja'),
         'shape': base.file_to_shape(out_dir / 'shape.ninja'),
@@ -30,8 +37,7 @@ def read_mmap_kwargs(out_dir: Path):
 
 
 def empty(out_dir: Union[str, Path], dtype, shape, order) -> np.memmap:
-    out_dir = Path(out_dir)
-    out_dir.mkdir(exist_ok=True)
+    out_dir = mkdir(out_dir)
     save_mmap_kwargs(out_dir, dtype, shape, order)
     memmap = np.memmap(str(out_dir / 'data.ninja'),
                        mode='w+',
@@ -43,8 +49,7 @@ def empty(out_dir: Union[str, Path], dtype, shape, order) -> np.memmap:
 
 def from_ndarray(out_dir: Union[str, Path], arr: np.ndarray) -> np.memmap:
     arr = np.asarray(arr)
-    out_dir = Path(out_dir)
-    out_dir.mkdir(exist_ok=True)
+    out_dir = mkdir(out_dir)
     dtype = arr.dtype
     shape = arr.shape
     order = 'F' if np.isfortran(arr) else 'C'
@@ -79,8 +84,7 @@ def from_generator(sample_generator,
                    batch_size: int,
                    n: int,
                    verbose=False) -> np.memmap:
-    out_dir = Path(out_dir)
-    out_dir.mkdir(exist_ok=True)
+    out_dir = mkdir(out_dir)
     samples = []
     memmap = None
     start = 0
