@@ -1,0 +1,13 @@
+language: python
+# ===== Linux ======
+os: linux
+dist: bionic
+python:
+  - 3.8
+install:
+  - pip install -r python/requirements.txt
+  - pip install pytest-cov
+script:
+  - export PYTHONPATH=$PYTHONPATH:$(realpath python/)
+  - pytest --cov --cov-report xml python/
+  - curl -Os https://uploader.codecov.io/latest/linux/codecov && chmod +x codecov && ./codecov
