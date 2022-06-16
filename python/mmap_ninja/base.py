@@ -40,14 +40,14 @@ def file_to_str(file: Union[str, Path], *args, **kwargs) -> str:
         return bytes_to_str(in_file.read(), *args, **kwargs)
 
 
-def shape_to_bytes(shape: Sequence[int], fmt: str = '<L') -> bytes:
+def shape_to_bytes(shape: Sequence[int], fmt: str = '<Q') -> bytes:
     res = bytearray()
     for axis_len in shape:
         res.extend(int_to_bytes(axis_len, fmt=fmt))
     return bytes(res)
 
 
-def bytes_to_shape(inp: bytes, step=4, fmt: str = '<L') -> Sequence[int]:
+def bytes_to_shape(inp: bytes, step=8, fmt: str = '<Q') -> Sequence[int]:
     res = []
     for start in range(0, len(inp) - 1, step):
         end = start + step
