@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 
 from mmap_ninja.ragged import RaggedMmap
+from joblib import delayed, Parallel
 
 
 def test_base_case(tmp_path):
@@ -145,8 +146,9 @@ def test_different_number_of_axes(tmp_path):
     assert np.allclose(mmap[-1], simple[-1])
 
 
-def test_different_number_of_axes_gen(tmp_path):
-    simple = [
+@pytest.fixture
+def np_array_with_different_number_of_axes():
+    return [
         np.array([
             [11, 13],
             [-1, 17]
@@ -154,6 +156,30 @@ def test_different_number_of_axes_gen(tmp_path):
         np.array([2, 3]),
         np.array([[90], [12]])
     ]
-    mmap = RaggedMmap.from_generator(tmp_path / 'base', simple, batch_size=1)
-    assert np.allclose(mmap[-1], simple[-1])
+
+
+def test_different_number_of_axes_gen(tmp_path, np_array_with_different_number_of_axes):
+    mmap = RaggedMmap.from_generator(tmp_path / 'base', np_array_with_different_number_of_axes, batch_size=1)
+    assert np.allclose(mmap[-1], np_array_with_different_number_of_axes[-1])
+
+
+def test_if_batch_size_exceeds_n_samples_crash(tmp_path, np_array_with_different_number_of_axes):
+    mmap = RaggedMmap.from_generator(tmp_path / 'base', np_array_with_different_number_of_axes, batch_size=100)
+    assert np.allclose(mmap[-1], np_array_with_different_number_of_axes[-1])
+
+
+def read_something(arr, i):
+    return arr[i]
+
+
+def test_parallel_read(tmp_path, np_array_with_different_number_of_axes):
+    n_workers = 32
+    RaggedMmap.from_generator(tmp_path / 'base', np_array_with_different_number_of_axes, batch_size=100)
+    ragged = RaggedMmap(tmp_path / 'base')
+    delayed_funcs = [delayed(read_something)(ragged, np.random.randint(len(ragged))) for _ in range(n_workers)]
+    p = Parallel()
+    r = p(delayed_funcs)
+    assert len(r) == n_workers
+
+
 
