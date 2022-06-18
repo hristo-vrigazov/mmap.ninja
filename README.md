@@ -93,11 +93,22 @@ for fast filesystem to memory I/O, this is your library!
 
 ## When do I use it?
 
-| Use case                 | Notebook                                                                                                                                                             | Benchmark                                                 | Class/Module                                |
-|:-------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------|:--------------------------------------------|
-| List of image files      | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [COCO 2017](#memory-mapping-images-with-different-shapes) | `from mmap_ninja.ragged import RaggedMmap`  |
-| List of text files       | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18bEwylFwx4owMpb-RAkJZS_9JrrUcFd7?usp=sharing) | [20 newsgroups](#memory-mapping-text-documents)           | `from mmap_ninja.string import StringsMmap` |
-| Flat array (e.g. labels) | Coming soon!                                                                                                                                                         | Coming soon!                                              | `from mmap_ninja import numpy as np_ninja`   |
+Use it whenever you want to store a sequence of `np.ndarray`s that you are going to
+read from at random positions very often.
+
+`mmap_ninja` can work with any type of data that can be stored as a `np.ndarray`, as the
+memory map is initialized with a generator that yields samples.
+
+In the table below, you can see concrete examples, but beware that those are just examples,
+`mmap_ninja` has no specific logic to handle images or videos or something like that.
+
+It just stores `np.ndarray` and it is up to you to decide what this array represents.
+
+| Use case   | Notebook                                                                                                                                                             | Benchmark                                                 | Class/Module                                |
+|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------|:--------------------------------------------|
+| Image      | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [COCO 2017](#memory-mapping-images-with-different-shapes) | `from mmap_ninja.ragged import RaggedMmap`  |
+| Text       | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18bEwylFwx4owMpb-RAkJZS_9JrrUcFd7?usp=sharing) | [20 newsgroups](#memory-mapping-text-documents)           | `from mmap_ninja.string import StringsMmap` |
+| Flat array | Coming soon!                                                                                                                                                         | Coming soon!                                              | `from mmap_ninja import numpy as np_ninja`   |
 
 [Back to Contents](#contents)
 
@@ -202,7 +213,12 @@ For this reason, do not use `mmap_ninja` in the following cases:
 * You are low on disk space
 * You want to send the data over a network - use a compressed format instead
 
-and similar cases
+There are other cases in which `mmap_ninja` is not a good choice:
+
+* When you want to concurrently append to the memory map (use a queue like RabbitMQ and append from a subscriber instead)
+* If you want to frequently delete samples from the memory map - this will require a new copy of the whole object
+
+and so on.
 
 [Back to Contents](#contents)
 
@@ -241,5 +257,7 @@ def extend(self, arrays: Sequence[np.ndarray]):
 [Back to Contents](#contents)
 
 ## FAQ
+
+TODO
 
 [Back to Contents](#contents)
