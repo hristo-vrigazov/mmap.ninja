@@ -16,6 +16,8 @@ pip install mmap_ninja
 [![PyPi version](https://badgen.net/pypi/v/mmap_ninja/)](https://pypi.com/project/mmap_ninja)
 [![PyPI license](https://img.shields.io/pypi/l/mmap_ninja.svg)](https://pypi.python.org/pypi/mmap_ninja/)
 
+![Alt text](./carbon.svg)
+
 Accelerate the iteration over your machine learning dataset by up to **20 times** !
 
 `mmap_ninja` is a library for storing your datasets in memory-mapped files,
@@ -25,6 +27,8 @@ The only dependencies are `numpy` and `tqdm`.
 
 You can use `mmap_ninja` with any training framework (such as `Tensorflow`, `PyTorch`, `MxNet`), etc.,
 as it stores your dataset as a memory-mapped numpy array.
+
+
 
 ## What is it?
 
