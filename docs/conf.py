@@ -12,7 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../python'))
+sys.path.insert(0, os.path.abspath('../python/'))
 
 
 # -- Project information -----------------------------------------------------
@@ -32,7 +32,8 @@ release = '0.2.3'
 # ones.
 extensions = [
     "sphinx_rtd_theme",
-    "sphinx.ext.autodoc"
+    "sphinx.ext.autodoc",
+    "sphinx_autodoc_typehints"
 ]
 
 # Add any paths that contain templates here, relative to this directory.

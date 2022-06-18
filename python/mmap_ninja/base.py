@@ -5,12 +5,6 @@ from typing import Union, Sequence, List
 
 
 def bytes_to_int(inp: bytes, fmt: str = '<i') -> int:
-    """
-    Reads an integer from bytes
-    :param inp: the bytes array to be converted
-    :param fmt: the format
-    :return:
-    """
     return struct.unpack(fmt, inp)[0]
 
 
