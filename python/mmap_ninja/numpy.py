@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Union, List, Tuple, Sequence
+from typing import Union, List, Tuple, Sequence, Optional, Dict
 
 # See: https://numpy.org/doc/stable/reference/generated/numpy.memmap.html
 import numpy as np
@@ -17,17 +17,35 @@ def mkdir(out_dir: Union[str, Path]) -> Path:
     out_dir.mkdir(exist_ok=True, parents=True)
     return out_dir
 
-def save_mmap_kwargs(out_dir: Path,
-                     dtype,
-                     shape,
-                     order):
+
+def save_mmap_kwargs(
+        out_dir: Path,
+        dtype: Union[np.dtype, str],
+        shape: Sequence[int],
+        order: str
+) -> None:
+    """
+    Persists the arguments needed for initializing a ``np.memmap``, so that the user does not have to specify them.
+
+    :param out_dir: The directory in which the memory map is persisted
+    :param dtype: The ``np.dtype`` of the memory map, represented either by a string or directly by its type.
+    :param shape: A sequence of integers representing the shape of the memory map.
+    :param order: A string, representing the order - ``"F"`` or ``"C"``
+    :return:
+    """
     out_dir = mkdir(out_dir)
     base.str_to_file(np.dtype(dtype).name, out_dir / f'dtype.ninja')
     base.shape_to_file(shape, out_dir / f'shape.ninja')
     base.str_to_file(order, out_dir / f'order.ninja')
 
 
-def read_mmap_kwargs(out_dir: Path):
+def read_mmap_kwargs(out_dir: Path) -> Dict:
+    """
+    Reads already persisted arguments needed for opening a ``np.memmap``.
+
+    :param out_dir: The persistence directory of the ``np.memmap``.
+    :return: A dictionary representing the ``kwargs`` needed for initialization.
+    """
     out_dir = mkdir(out_dir)
     return {
         'dtype': base.file_to_str(out_dir / 'dtype.ninja'),
@@ -36,7 +54,21 @@ def read_mmap_kwargs(out_dir: Path):
     }
 
 
-def empty(out_dir: Union[str, Path], dtype, shape, order) -> np.memmap:
+def empty(
+        out_dir: Union[str, Path],
+        dtype: Union[str, np.dtype],
+        shape: Sequence[int],
+        order: str
+) -> np.memmap:
+    """
+    Creates an empty ``np.memmap``
+
+    :param out_dir: The persistence directory
+    :param dtype: The dtype of the array
+    :param shape: The shape of the array
+    :param order: The order, either ``"C"`` or ``"F"``
+    :return:
+    """
     out_dir = mkdir(out_dir)
     save_mmap_kwargs(out_dir, dtype, shape, order)
     memmap = np.memmap(str(out_dir / 'data.ninja'),
@@ -47,7 +79,17 @@ def empty(out_dir: Union[str, Path], dtype, shape, order) -> np.memmap:
     return memmap
 
 
-def from_ndarray(out_dir: Union[str, Path], arr: np.ndarray) -> np.memmap:
+def from_ndarray(
+        out_dir: Union[str, Path],
+        arr: np.ndarray
+) -> np.memmap:
+    """
+    Initializes a memory map, in which all samples should be of the same shape
+
+    :param out_dir: The directory in which the memory map will be persisted
+    :param arr: The numpy array which should be memory mapped.
+    :return: The memory mapped file
+    """
     arr = np.asarray(arr)
     out_dir = mkdir(out_dir)
     dtype = arr.dtype
@@ -63,7 +105,24 @@ def from_ndarray(out_dir: Union[str, Path], arr: np.ndarray) -> np.memmap:
     return memmap
 
 
-def write_samples(memmap, out_dir, samples, start, total):
+def write_samples(
+        memmap: Optional[np.memmap],
+        out_dir: Path,
+        samples: Sequence[np.ndarray],
+        start: int,
+        total: int
+) -> Tuple[np.memmap, int]:
+    """
+    Writes samples starting from a given start index in the memory map.
+    Initializes the memory map if it is not yet initialized
+
+    :param memmap: The memory map or ``None`` if not initialized yet
+    :param out_dir: The directory in which the memory map is persisted
+    :param samples: The samples that need to be written
+    :param start: The start index at which the samples should be written
+    :param total: Total number of samples. Used when initializing the memory map.
+    :return: A tuple of the updated memory map, and the end offset at which the last sample was written.
+    """
     arr = np.stack(samples)
     if memmap is None:
         dtype = arr.dtype
@@ -162,4 +221,3 @@ def lists_of_ndarrays_to_bytes(lists: Sequence[np.ndarray], dtype):
         offset += len(flattened)
     buffer = np.concatenate(arrs)
     return NumpyBytesSlices(buffer, starts, ends, flattened_shapes, shapes)
-
