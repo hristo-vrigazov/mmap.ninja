@@ -15,6 +15,10 @@ def test_int_file_conversions(tmp_path):
     assert a == base.file_to_int(file)
 
 
+def test_large_num():
+    base.int_to_bytes(6653643750000, fmt='<Q')
+
+
 def test_str_conversions():
     a = 'ugabuga'
     assert a == base.bytes_to_str(base.str_to_bytes(a))
