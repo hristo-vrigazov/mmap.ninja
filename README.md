@@ -16,7 +16,7 @@ pip install mmap_ninja
 [![PyPi version](https://badgen.net/pypi/v/mmap_ninja/)](https://pypi.com/project/mmap_ninja)
 [![PyPI license](https://img.shields.io/pypi/l/mmap_ninja.svg)](https://pypi.python.org/pypi/mmap_ninja/)
 
-Contents:
+## Contents
 
 1. [Quick example](#quick-example)
 2. [What is it?](#what-is-it)
@@ -25,6 +25,8 @@ Contents:
 5. Example Colab notebooks
 6. What types of data can I use it with?
 7. How does it compare to ?
+8. [API guide](#api-guide)
+9. [FAQ](#faq)
 
 ## Quick example
 
@@ -32,15 +34,17 @@ Contents:
 import numpy as np
 import matplotlib.image as mpimg
 from tqdm import tqdm
-
+from pathlib import Path
 from mmap_ninja.ragged import RaggedMmap
+
+coco_path = Path('<PATH TO IMAGE DATASET>')
 
 # Once per project, convert the images to a memory map
 RaggedMmap.from_generator(
     # Directory in which the memory map will be persisted
     out_dir='images_mmap',
     # Something that yields np.ndarray
-    sample_generator=map(mpimg.imread, img_paths),
+    sample_generator=map(mpimg.imread, coco_path.iterdir()),
     # Maximum number of samples to keep in memory before flushing to disk
     batch_size=1024,
     # Show/hide progress bar
@@ -55,6 +59,8 @@ images_mmap = RaggedMmap('images_mmap')
 for i in tqdm(range(len(images_mmap))):
   img: np.ndarray = images_mmap[i]
 ```
+
+[Back to Contents](#contents)
 
 ## What is it?
 
@@ -82,36 +88,7 @@ datasets, reducing the time needed for training.
 Memory maps would usually take a little more disk space though, so if you are willing to trade some disk space
 for fast filesystem to memory I/O, this is your library!
 
-All memory map classes are initialized first (once per project) - usually this is done
-from a generator or an in-memory object (check the [use cases](#use-cases)).
-
-For example, the classmethod for creating a `RaggedMmap` from a generator looks like this:
-
-```python
-@classmethod
-def from_generator(
-        cls,
-        out_dir: Union[str, Path],
-        sample_generator,
-        batch_size: int,
-        verbose=False,
-        **kwargs
-):
-```
-
-where `out_dir` is the directory to persist the memory map, the `samples_generator` is the generator
-of the samples (duh), and `batch_size` is the maximum number of samples to be kept at once in memory
-before flushing to disk. `verbose` either shows a progress bar or does not.
-
-Once created, they provide the following highly performant methods:
-
-```python
-
-def __getitem__(self, item):
-def __len__(self):
-def append(self, array: np.ndarray):
-def extend(self, arrays: Sequence[np.ndarray]):
-```
+[Back to Contents](#contents)
 
 ## When do I use it?
 
@@ -120,6 +97,8 @@ def extend(self, arrays: Sequence[np.ndarray]):
 | List of image files      | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [COCO 2017](#memory-mapping-images-with-different-shapes) | `from mmap_ninja.ragged import RaggedMmap`  |
 | List of text files       | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18bEwylFwx4owMpb-RAkJZS_9JrrUcFd7?usp=sharing) | [20 newsgroups](#memory-mapping-text-documents)           | `from mmap_ninja.string import StringsMmap` |
 | Flat array (e.g. labels) | Coming soon!                                                                                                                                                         | Coming soon!                                              | `from mmap_ninja import numpy as np_ninja`   |
+
+[Back to Contents](#contents)
 
 ### Memory mapping images with different shapes
 
@@ -212,26 +191,37 @@ Moreover, it takes **2 times** less disk space (this is true only for `StringsMm
 would take more disk space).
 This makes the `StringsMmmap` a fantastic choice for your NLP, text-based machine learning datasets!
 
+## API guide
+All memory map classes are initialized first (once per project) - usually this is done
+from a generator or an in-memory object (check the [use cases](#use-cases)).
 
+For example, the classmethod for creating a `RaggedMmap` from a generator looks like this:
 
-[//]: # (### Directory of jpg files)
+```python
+@classmethod
+def from_generator(
+        cls,
+        out_dir: Union[str, Path],
+        sample_generator,
+        batch_size: int,
+        verbose=False,
+        **kwargs
+):
+```
 
-[//]: # ()
-[//]: # (A directory of `.jpg` files - very popular &#40;no need to do anything&#41;.)
+where `out_dir` is the directory to persist the memory map, the `samples_generator` is the generator
+of the samples (duh), and `batch_size` is the maximum number of samples to be kept at once in memory
+before flushing to disk. `verbose` either shows a progress bar or does not.
 
-[//]: # ()
-[//]: # (Pros and cons:)
+Once created, they provide the following highly performant methods:
 
-[//]: # ()
-[//]: # (:heavy_plus_sign: No need to do additional work after downloading the dataset)
+```python
 
-[//]: # ()
-[//]: # (:heavy_plus_sign: Can open a random image from the dataset easily based on its filename)
+def __getitem__(self, item):
+def __len__(self):
+def append(self, array: np.ndarray):
+def extend(self, arrays: Sequence[np.ndarray]):
+```
 
-[//]: # ()
-[//]: # (:heavy_minus_sign: It's super slow :hourglass_flowing_sand:. Like, really, )
+## FAQ
 
-[//]: # (really slow and you waste all that time on every epoch, on every model you train!)
-
-[//]: # ()
-[//]: # (More information is coming soon!)
