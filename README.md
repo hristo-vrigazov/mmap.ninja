@@ -16,7 +16,42 @@ pip install mmap_ninja
 [![PyPi version](https://badgen.net/pypi/v/mmap_ninja/)](https://pypi.com/project/mmap_ninja)
 [![PyPI license](https://img.shields.io/pypi/l/mmap_ninja.svg)](https://pypi.python.org/pypi/mmap_ninja/)
 
-![Alt text](./carbon_ragged.svg)
+Contents:
+
+1. [Quick example](#quick-example)
+2. [What is it?](#what-is-it)
+3. [When do I use it?](#when-do-i-use-it)
+4. When shouldn't I use it?
+5. Example Colab notebooks
+6. How does it compare to ?
+
+## Quick example
+
+```python
+import numpy as np
+import matplotlib.image as mpimg
+from tqdm import tqdm
+
+from mmap_ninja.ragged import RaggedMmap
+
+# Once per project, conver the images to a memory map
+RaggedMmap.from_generator(
+    out_dir='images_mmap',
+    sample_generator=map(mpimg.imread, img_paths),
+    batch_size=1024,
+    verbose=True
+)
+
+# Open the memory map
+images_mmap = RaggedMmap('images_mmap')
+
+# This iteration takes 0.2s on COCO val 2017
+# This iteration takes 35s without memory-mapping
+for i in tqdm(range(len(images_mmap))):
+  img: np.ndarray = images_mmap[i]
+```
+
+## What is it?
 
 Accelerate the iteration over your machine learning dataset by up to **20 times** !
 
@@ -27,10 +62,6 @@ The only dependencies are `numpy` and `tqdm`.
 
 You can use `mmap_ninja` with any training framework (such as `Tensorflow`, `PyTorch`, `MxNet`), etc.,
 as it stores your dataset as a memory-mapped numpy array.
-
-
-
-## What is it?
 
 A **memory mapped file** is a file that is physically present on disk in a way that the correlation between the file
 and the memory space permits applications to treat the mapped portions as if it were primary memory, allowing very fast
@@ -77,7 +108,7 @@ def append(self, array: np.ndarray):
 def extend(self, arrays: Sequence[np.ndarray]):
 ```
 
-## Use cases
+## When do I use it?
 
 | Use case                 | Notebook                                                                                                                                                             | Benchmark                                                 | Class/Module                                |
 |:-------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------|:--------------------------------------------|
