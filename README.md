@@ -23,7 +23,8 @@ Contents:
 3. [When do I use it?](#when-do-i-use-it)
 4. When shouldn't I use it?
 5. Example Colab notebooks
-6. How does it compare to ?
+6. What types of data can I use it with?
+7. How does it compare to ?
 
 ## Quick example
 
@@ -34,11 +35,15 @@ from tqdm import tqdm
 
 from mmap_ninja.ragged import RaggedMmap
 
-# Once per project, conver the images to a memory map
+# Once per project, convert the images to a memory map
 RaggedMmap.from_generator(
+    # Directory in which the memory map will be persisted
     out_dir='images_mmap',
+    # Something that yields np.ndarray
     sample_generator=map(mpimg.imread, img_paths),
+    # Maximum number of samples to keep in memory before flushing to disk
     batch_size=1024,
+    # Show/hide progress bar
     verbose=True
 )
 
