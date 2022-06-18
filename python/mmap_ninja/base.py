@@ -5,6 +5,12 @@ from typing import Union, Sequence, List
 
 
 def bytes_to_int(inp: bytes, fmt: str = '<i') -> int:
+    """
+    Reads an integer from bytes
+    :param inp: the bytes array to be converted
+    :param fmt: the format
+    :return:
+    """
     return struct.unpack(fmt, inp)[0]
 
 
@@ -113,7 +119,6 @@ def from_generator_base(sample_generator, out_dir, batch_size, batch_ctor, **kwa
 
 
 class Wrapped:
-
     def __init__(self, data, wrapper_fn):
         self.data = data
         self.wrapper_fn = wrapper_fn
