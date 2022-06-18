@@ -16,7 +16,7 @@ pip install mmap_ninja
 [![PyPi version](https://badgen.net/pypi/v/mmap_ninja/)](https://pypi.com/project/mmap_ninja)
 [![PyPI license](https://img.shields.io/pypi/l/mmap_ninja.svg)](https://pypi.python.org/pypi/mmap_ninja/)
 
-![Alt text](./carbon.svg)
+![Alt text](./carbon_ragged.svg)
 
 Accelerate the iteration over your machine learning dataset by up to **20 times** !
 
