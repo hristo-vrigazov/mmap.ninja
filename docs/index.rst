@@ -10,6 +10,7 @@ Welcome to mmap_ninja's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   modules
 
 
 Indices and tables
