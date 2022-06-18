@@ -20,14 +20,12 @@ pip install mmap_ninja
 
 1. [Quick example](#quick-example)
 2. [What is it?](#what-is-it)
-3. [When do I use it?](#when-do-i-use-it)
-4. [When shouldn't I use it?](#when-shouldnt-i-use-it)
-5. Example Colab notebooks
-6. What types of data can I use it with?
-7. How does it compare to ?
-8. [API guide](#api-guide)
-9. [FAQ](#faq)
-10. I want to contribute
+3. [When to use it?](#when-do-i-use-it)
+4. [When not to use it?](#when-not-to-use-it)
+5. [How it works?](#how-it-works)
+6. [API guide](#api-guide)
+7. [FAQ](#faq)
+8. [I want to contribute](#i-want-to-contribute)
 
 ## Quick example
 
@@ -93,7 +91,7 @@ for fast filesystem to memory I/O, this is your library!
 
 ## When do I use it?
 
-Use it whenever you want to store a sequence of `np.ndarray`s that you are going to
+Use it whenever you want to store a sequence of `np.ndarray`s (of varying shapes) that you are going to
 read from at random positions very often.
 
 `mmap_ninja` can work with any type of data that can be stored as a `np.ndarray`, as the
@@ -104,11 +102,12 @@ In the table below, you can see concrete examples, but beware that those are jus
 
 It just stores `np.ndarray` and it is up to you to decide what this array represents.
 
-| Use case   | Notebook                                                                                                                                                             | Benchmark                                                 | Class/Module                                |
-|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------|:--------------------------------------------|
-| Image      | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [COCO 2017](#memory-mapping-images-with-different-shapes) | `from mmap_ninja.ragged import RaggedMmap`  |
-| Text       | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18bEwylFwx4owMpb-RAkJZS_9JrrUcFd7?usp=sharing) | [20 newsgroups](#memory-mapping-text-documents)           | `from mmap_ninja.string import StringsMmap` |
-| Flat array | Coming soon!                                                                                                                                                         | Coming soon!                                              | `from mmap_ninja import numpy as np_ninja`   |
+| Use case   | Notebook                                                                                                                                                             | Benchmark                                                 | Class/Module                                 |
+|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------|:---------------------------------------------|
+| Image      | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [COCO 2017](#memory-mapping-images-with-different-shapes) | `from mmap_ninja.ragged import RaggedMmap`   |
+| Text       | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18bEwylFwx4owMpb-RAkJZS_9JrrUcFd7?usp=sharing) | [20 newsgroups](#memory-mapping-text-documents)           | `from mmap_ninja.string import StringsMmap`  |
+| Video      | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xMEHbwntgpBfCGfTicXmdbA8UpEowXzW?usp=sharing) | Coming soon!                                              | `from mmap_ninja import numpy as RaggedMmap` |
+
 
 [Back to Contents](#contents)
 
@@ -203,7 +202,7 @@ Moreover, it takes **2 times** less disk space (this is true only for `StringsMm
 would take more disk space).
 This makes the `StringsMmmap` a fantastic choice for your NLP, text-based machine learning datasets!
 
-## When shouldn't I use it?
+## When not to use it?
 
 Very frequently, `mmap_ninja` takes more disk space than traditional approaches.
 For example, for jpeg images, it takes 4 times more disk space. 
@@ -222,42 +221,27 @@ and so on.
 
 [Back to Contents](#contents)
 
+## How it works
+
+Coming soon
+
+[Back to Contents](#contents)
+
+
 ## API guide
-All memory map classes are initialized first (once per project) - usually this is done
-from a generator or an in-memory object (check the [use cases](#use-cases)).
 
-For example, the classmethod for creating a `RaggedMmap` from a generator looks like this:
-
-```python
-@classmethod
-def from_generator(
-        cls,
-        out_dir: Union[str, Path],
-        sample_generator,
-        batch_size: int,
-        verbose=False,
-        **kwargs
-):
-```
-
-where `out_dir` is the directory to persist the memory map, the `samples_generator` is the generator
-of the samples (duh), and `batch_size` is the maximum number of samples to be kept at once in memory
-before flushing to disk. `verbose` either shows a progress bar or does not.
-
-Once created, they provide the following highly performant methods:
-
-```python
-
-def __getitem__(self, item):
-def __len__(self):
-def append(self, array: np.ndarray):
-def extend(self, arrays: Sequence[np.ndarray]):
-```
+Coming soon
 
 [Back to Contents](#contents)
 
 ## FAQ
 
-TODO
+Coming soon!
+
+[Back to Contents](#contents)
+
+## I want to contribute
+
+Coming soon!
 
 [Back to Contents](#contents)
