@@ -21,12 +21,13 @@ pip install mmap_ninja
 1. [Quick example](#quick-example)
 2. [What is it?](#what-is-it)
 3. [When do I use it?](#when-do-i-use-it)
-4. When shouldn't I use it?
+4. [When shouldn't I use it?](#when-shouldnt-i-use-it)
 5. Example Colab notebooks
 6. What types of data can I use it with?
 7. How does it compare to ?
 8. [API guide](#api-guide)
 9. [FAQ](#faq)
+10. I want to contribute
 
 ## Quick example
 
@@ -191,6 +192,20 @@ Moreover, it takes **2 times** less disk space (this is true only for `StringsMm
 would take more disk space).
 This makes the `StringsMmmap` a fantastic choice for your NLP, text-based machine learning datasets!
 
+## When shouldn't I use it?
+
+Very frequently, `mmap_ninja` takes more disk space than traditional approaches.
+For example, for jpeg images, it takes 4 times more disk space. 
+
+For this reason, do not use `mmap_ninja` in the following cases:
+
+* You are low on disk space
+* You want to send the data over a network - use a compressed format instead
+
+and similar cases
+
+[Back to Contents](#contents)
+
 ## API guide
 All memory map classes are initialized first (once per project) - usually this is done
 from a generator or an in-memory object (check the [use cases](#use-cases)).
@@ -223,5 +238,8 @@ def append(self, array: np.ndarray):
 def extend(self, arrays: Sequence[np.ndarray]):
 ```
 
+[Back to Contents](#contents)
+
 ## FAQ
 
+[Back to Contents](#contents)
