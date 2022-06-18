@@ -6,7 +6,7 @@ python:
   - 3.8
 install:
   - pip install -r python/requirements.txt
-  - pip install pytest-cov
+  - pip install pytest-cov joblib
 script:
   - export PYTHONPATH=$PYTHONPATH:$(realpath python/)
   - pytest --cov --cov-report xml python/
