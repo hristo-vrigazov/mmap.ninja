@@ -236,7 +236,8 @@ Coming soon
 
 ## FAQ
 
-Coming soon!
+Q: Can I use it with Tensorflow/TF?
+A: Of course. You can use it with any framework that can work with numpy arrays. Here's an [end-to-end example](https://colab.research.google.com/drive/1zXFFXc33hITitRbgeE_KrH7ns2Ddv7q9?usp=sharing)
 
 [Back to Contents](#contents)
 
