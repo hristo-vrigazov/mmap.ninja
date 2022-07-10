@@ -143,6 +143,16 @@ def from_generator(sample_generator,
                    batch_size: int,
                    n: int,
                    verbose=False) -> np.memmap:
+    """
+    Create a numpy array from a sample generator.
+
+    :param sample_generator: A generator of the samples
+    :param out_dir: The output directory
+    :param batch_size: How often to flush to disk
+    :param n: Total number of samples.
+    :param verbose: Whether to show the progress bar.
+    :return:
+    """
     out_dir = mkdir(out_dir)
     samples = []
     memmap = None
@@ -161,7 +171,14 @@ def from_generator(sample_generator,
     return memmap
 
 
-def open_existing(out_dir: Union[str, Path], mode='r'):
+def open_existing(out_dir: Union[str, Path], mode='r') -> np.memmap:
+    """
+    Open an already existing numpy array.
+
+    :param out_dir: The output directory.
+    :param mode: The mode with which to open the memory-mapped file.
+    :return: The ``np.memmap`` object.
+    """
     out_dir = Path(out_dir)
     kwargs = read_mmap_kwargs(out_dir)
     memmap = np.memmap(str(out_dir / 'data.ninja'),
@@ -170,7 +187,14 @@ def open_existing(out_dir: Union[str, Path], mode='r'):
     return memmap
 
 
-def extend_dir(out_dir: Union[str, Path], arr: np.ndarray):
+def extend_dir(out_dir: Union[str, Path], arr: np.ndarray) -> None:
+    """
+    Extend an already existing memory map by adding new samples
+
+    :param out_dir: The directory, in which the memory-mapped array is stored.
+    :param arr: The numpy array of new samples
+    :return:
+    """
     arr = np.asarray(arr)
     out_dir = Path(out_dir)
     kwargs = read_mmap_kwargs(out_dir)
@@ -186,7 +210,14 @@ def extend_dir(out_dir: Union[str, Path], arr: np.ndarray):
     base.shape_to_file(new_shape, out_dir / f'shape.ninja')
 
 
-def extend(np_mmap: np.memmap, arr: np.ndarray):
+def extend(np_mmap: np.memmap, arr: np.ndarray) -> None:
+    """
+    Extend a numpy memory map with new samples
+
+    :param np_mmap: The numpy memory map object
+    :param arr: The new samples
+    :return:
+    """
     extend_dir(Path(np_mmap.filename).parent, arr)
 
 
@@ -199,7 +230,14 @@ class NumpyBytesSlices:
     shapes: List[Tuple[int]]
 
 
-def lists_of_ndarrays_to_bytes(lists: Sequence[np.ndarray], dtype):
+def lists_of_ndarrays_to_bytes(lists: Sequence[np.ndarray], dtype) -> NumpyBytesSlices:
+    """
+    Converts a list of numpy arrays into bytes.
+
+    :param lists: The samples that have to be converted.
+    :param dtype: The dtype of the arrays. If not provided, the dtype of the first sample will be used.
+    :return: The numpy arrays as bytes
+    """
     offset = 0
     starts = []
     ends = []
