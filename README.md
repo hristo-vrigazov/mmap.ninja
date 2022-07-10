@@ -230,7 +230,7 @@ Coming soon
 
 ## API guide
 
-[Read the docs](https://mmapninja.readthedocs.io/en/stable/)
+[Read the docs](https://mmapninja.readthedocs.io/en/latest/)
 
 [Back to Contents](#contents)
 
