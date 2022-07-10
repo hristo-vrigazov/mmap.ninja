@@ -117,6 +117,14 @@ def shape_to_bytes(shape: Sequence[int], fmt: str = '<Q') -> bytes:
 
 
 def bytes_to_shape(inp: bytes, step=8, fmt: str = '<Q') -> Sequence[int]:
+    """
+    Reads shape tuple from bytes.
+
+    :param inp: the bytes array
+    :param step: Number of bytes to read for an int
+    :param fmt: The formatting used for the integer.
+    :return: A tuple of integers, representing the shape.
+    """
     res = []
     for start in range(0, len(inp) - 1, step):
         end = start + step
@@ -124,12 +132,25 @@ def bytes_to_shape(inp: bytes, step=8, fmt: str = '<Q') -> Sequence[int]:
     return tuple(res)
 
 
-def shape_to_file(shape: Sequence[int], file: Union[str, Path]):
+def shape_to_file(shape: Sequence[int], file: Union[str, Path]) -> None:
+    """
+    Write a shape sequence to a file
+
+    :param shape: The shape to be dumped.
+    :param file: The output file
+    :return:
+    """
     with open(file, 'wb') as out_file:
         out_file.write(shape_to_bytes(shape))
 
 
 def file_to_shape(file: Union[str, Path]) -> Sequence[int]:
+    """
+    Read shape from file
+
+    :param file: The input file
+    :return: the shape as a tuple
+    """
     with open(file, 'rb') as out_file:
         return bytes_to_shape(out_file.read())
 
@@ -142,6 +163,13 @@ class BytesSlices:
 
 
 def sequence_of_strings_to_bytes(strings: Sequence[str], verbose=False) -> BytesSlices:
+    """
+    Converts a sequence of strings to a bytes array
+
+    :param strings: A sequence of strings.
+    :param verbose: whether a tqdm progressbar should be shown.
+    :return: the bytes slices
+    """
     buffer = bytearray()
     starts = []
     ends = []
