@@ -2,7 +2,6 @@
 
 # mmap.ninja
 
-
 Install with:
 
 ```bash
@@ -56,7 +55,7 @@ images_mmap = RaggedMmap('images_mmap')
 # This iteration takes 0.2s on COCO val 2017
 # This iteration takes 35s without memory-mapping
 for i in tqdm(range(len(images_mmap))):
-  img: np.ndarray = images_mmap[i]
+    img: np.ndarray = images_mmap[i]
 ```
 
 [Back to Contents](#contents)
@@ -80,9 +79,8 @@ I/O!
 When working on a machine learning project, one of the most time-consuming parts is the model's training.
 However, a large portion of the training time actually consists of just iterating over your dataset and filesystem I/O!
 
-This library, `mmap_ninja` provides high-level, easy to use, well tested API for using memory maps for your 
+This library, `mmap_ninja` provides high-level, easy to use, well tested API for using memory maps for your
 datasets, reducing the time needed for training.
-
 
 Memory maps would usually take a little more disk space though, so if you are willing to trade some disk space
 for fast filesystem to memory I/O, this is your library!
@@ -108,15 +106,15 @@ It just stores `np.ndarray` and it is up to you to decide what this array repres
 | Text       | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18bEwylFwx4owMpb-RAkJZS_9JrrUcFd7?usp=sharing) | [20 newsgroups](#memory-mapping-text-documents)           | `from mmap_ninja.string import StringsMmap`  |
 | Video      | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xMEHbwntgpBfCGfTicXmdbA8UpEowXzW?usp=sharing) | Coming soon!                                              | `from mmap_ninja import numpy as RaggedMmap` |
 
-
 [Back to Contents](#contents)
 
 ### Memory mapping images with different shapes
 
-You can create a new `RaggedMmmap` from one of its class methods: `RaggedMmmap.from_lists`, 
+You can create a new `RaggedMmmap` from one of its class methods: `RaggedMmmap.from_lists`,
 `RaggedMmap.from_generator`.
 
-Create a memory map from generator, flushing to disk every 1024 images (so that you don't have to keep it all in memory at once):
+Create a memory map from generator, flushing to disk every 1024 images (so that you don't have to keep it all in memory
+at once):
 
 ```python
 import matplotlib.pyplot as plt
@@ -125,14 +123,15 @@ from pathlib import Path
 
 coco_path = Path('<PATH TO IMAGE DATASET>')
 val_images = RaggedMmap.from_generator(
-    out_dir='val_images', 
-    sample_generator=map(plt.imread, coco_path.iterdir()), 
-    batch_size=1024, 
+    out_dir='val_images',
+    sample_generator=map(plt.imread, coco_path.iterdir()),
+    batch_size=1024,
     verbose=True
 )
 ```
 
 Once created, you can open the map by simply supplying the path to the memory map:
+
 ```python
 from mmap_ninja.ragged import RaggedMmap
 
@@ -145,14 +144,13 @@ You can also extend an already existing memory map easily by using the `.extend`
 In the table show the time needed for initial loading, one iteration over the COCO validation 2017 dataset,
 the memory usage of every method and the disk usage.
 
-
 |                  |   Initial load (s) |   Time for iteration (s) | Memory usage (GB)   | Disk usage (GB)   |
 |:-----------------|-------------------:|-------------------------:|:--------------------|:------------------|
 | in_memory        |           1.356077 |                 0.000403 | 3.818741 GB         | 3.819034 GB       |
 | ragged_mmap      |           0.002054 |                 0.057858 | 0.001144 GB         | 3.819114 GB       |
 | imread_from_disk |           0.000000 |                22.208385 | 0.001144 GB         | 0.758753 GB       |
 
-You can see that once created, the `RaggedMmap` is **383 times** faster for iterating over the 
+You can see that once created, the `RaggedMmap` is **383 times** faster for iterating over the
 dataset.
 It does require 4 times more disk space though, so if you are willing to trade 4 times more disk space
 for **383 times** speedup (and less memory usage), you definitely should use the `RaggedMmap`!
@@ -162,10 +160,11 @@ This makes the `RaggedMmap` a fantastic choice for your computer vision, image-b
 ### Memory mapping text documents
 
 You can create a new `StringsMmmap` from one of its class methods: `StringsMmmap.from_strings`,
-`StringsMmap.from_generator`. 
+`StringsMmap.from_generator`.
 Once it's created, you can open it by just supplying the path to the memory map.
 
-An example of creating a memory map for the [sklearn's 20newsgroups dataset](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_20newsgroups.html):
+An example of creating a memory map for
+the [sklearn's 20newsgroups dataset](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_20newsgroups.html):
 
 ```python
 from mmap_ninja.string import StringsMmap
@@ -186,7 +185,9 @@ print(texts[123])  # Prints the 123-th text
 
 You can also extend an already existing memory map easily by using the `.extend` method.
 
-In the table show the time needed for initial loading, 100 iterations over the [sklearn's 20newsgroups dataset](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_20newsgroups.html),
+In the table show the time needed for initial loading, 100 iterations over
+the [sklearn's 20newsgroups dataset](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_20newsgroups.html)
+,
 the memory usage of every method and the disk usage.
 
 |                |   Initial load (s) |   Time for iteration (s) | Memory usage (GB)   | Disk usage (GB)   |
@@ -195,17 +196,17 @@ the memory usage of every method and the disk usage.
 | ragged_mmap    |           0.003701 |                 2.052659 | 0.07 MB             | 22 MB             |
 | read_from_disk |           0.000000 |                13.996738 | 0.07 MB             | 45 MB             |
 
-
 You can see that once created, the `StringsMmap` is nearly **7 times** faster compared to reading `.txt` files
 from disk one by one.
-Moreover, it takes **2 times** less disk space (this is true only for `StringsMmap`, in general for other types the memory map
+Moreover, it takes **2 times** less disk space (this is true only for `StringsMmap`, in general for other types the
+memory map
 would take more disk space).
 This makes the `StringsMmmap` a fantastic choice for your NLP, text-based machine learning datasets!
 
 ## When not to use it?
 
 Very frequently, `mmap_ninja` takes more disk space than traditional approaches.
-For example, for jpeg images, it takes 4 times more disk space. 
+For example, for jpeg images, it takes 4 times more disk space.
 
 For this reason, do not use `mmap_ninja` in the following cases:
 
@@ -214,7 +215,8 @@ For this reason, do not use `mmap_ninja` in the following cases:
 
 There are other cases in which `mmap_ninja` is not a good choice:
 
-* When you want to concurrently append to the memory map (use a queue like RabbitMQ and append from a subscriber instead)
+* When you want to concurrently append to the memory map (use a queue like RabbitMQ and append from a subscriber
+  instead)
 * If you want to frequently delete samples from the memory map - this will require a new copy of the whole object
 
 and so on.
@@ -227,7 +229,6 @@ Coming soon
 
 [Back to Contents](#contents)
 
-
 ## API guide
 
 [Read the docs](https://mmapninja.readthedocs.io/en/latest/)
@@ -237,7 +238,8 @@ Coming soon
 ## FAQ
 
 Q: Can I use it with Tensorflow/TF?
-A: Of course. You can use it with any framework that can work with numpy arrays. Here's an [end-to-end example](https://colab.research.google.com/drive/1zXFFXc33hITitRbgeE_KrH7ns2Ddv7q9?usp=sharing)
+A: Of course. You can use it with any framework that can work with numpy arrays. Here's
+an [end-to-end example](https://colab.research.google.com/drive/1zXFFXc33hITitRbgeE_KrH7ns2Ddv7q9?usp=sharing)
 
 [Back to Contents](#contents)
 

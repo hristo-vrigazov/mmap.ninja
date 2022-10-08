@@ -9,22 +9,24 @@ from mmap_ninja.base import bytes_to_str, str_to_bytes, sequence_of_strings_to_b
 
 
 class StringsMmap:
-
-    def __init__(self, out_dir: Union[str, Path],
-                 mode='r+b',
-                 starts_key='starts',
-                 ends_key='ends'):
+    def __init__(
+        self,
+        out_dir: Union[str, Path],
+        mode="r+b",
+        starts_key="starts",
+        ends_key="ends",
+    ):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
-        data_file = out_dir / 'data.ninja'
+        data_file = out_dir / "data.ninja"
         self.data_file = Path(data_file)
         self.mode = mode
         self.out_dir = out_dir
         self.starts_key = starts_key
         self.ends_key = ends_key
 
-        self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode='r')
-        self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode='r')
+        self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode="r")
+        self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode="r")
         self.range = np.arange(len(self.starts), dtype=np.int64)
         self.file = open(data_file, mode=mode)
         self.buffer = mmap.mmap(self.file.fileno(), 0)
@@ -74,12 +76,12 @@ class StringsMmap:
         numpy.extend(self.ends, end_offsets)
         self.close()
         out_dir = self.data_file.parent
-        with open(out_dir / 'data.ninja', 'ab') as data_file:
+        with open(out_dir / "data.ninja", "ab") as data_file:
             data_file.write(bytes_slices.buffer)
             data_file.flush()
 
-        self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode='r')
-        self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode='r')
+        self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode="r")
+        self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode="r")
         self.range = np.arange(len(self.starts), dtype=np.int64)
         self.file = open(self.data_file, mode=self.mode)
         self.buffer = mmap.mmap(self.file.fileno(), 0)
@@ -88,34 +90,31 @@ class StringsMmap:
         self.extend([string])
 
     @classmethod
-    def from_strings(cls, out_dir: Union[str, Path],
-                     strings: Sequence[str],
-                     mode='r+b',
-                     starts_key='starts',
-                     ends_key='ends',
-                     verbose=False):
+    def from_strings(
+        cls,
+        out_dir: Union[str, Path],
+        strings: Sequence[str],
+        mode="r+b",
+        starts_key="starts",
+        ends_key="ends",
+        verbose=False,
+    ):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
         bytes_slices = sequence_of_strings_to_bytes(strings, verbose=verbose)
-        with open(out_dir / 'data.ninja', "wb") as f:
+        with open(out_dir / "data.ninja", "wb") as f:
             f.write(bytes_slices.buffer)
         numpy.from_ndarray(out_dir / starts_key, np.array(bytes_slices.starts, dtype=np.int64))
         numpy.from_ndarray(out_dir / ends_key, np.array(bytes_slices.ends, dtype=np.int64))
-        return cls(out_dir,
-                   mode=mode,
-                   starts_key=starts_key,
-                   ends_key=ends_key)
+        return cls(out_dir, mode=mode, starts_key=starts_key, ends_key=ends_key)
 
     @classmethod
-    def from_generator(cls, out_dir: Union[str, Path],
-                       sample_generator,
-                       batch_size: int,
-                       verbose=False,
-                       **kwargs):
-        return base.from_generator_base(out_dir=out_dir,
-                                        sample_generator=sample_generator,
-                                        batch_size=batch_size,
-                                        verbose=verbose,
-                                        batch_ctor=cls.from_strings,
-                                        **kwargs)
-
+    def from_generator(cls, out_dir: Union[str, Path], sample_generator, batch_size: int, verbose=False, **kwargs):
+        return base.from_generator_base(
+            out_dir=out_dir,
+            sample_generator=sample_generator,
+            batch_size=batch_size,
+            verbose=verbose,
+            batch_ctor=cls.from_strings,
+            **kwargs
+        )

@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 import pathlib
 import mmap_ninja
+
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
 
@@ -27,10 +28,9 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
-        "Operating System :: OS Independent"
+        "Operating System :: OS Independent",
     ],
-    packages=find_packages(exclude=("tests",
-                                    "benchmark_images.py")),
+    packages=find_packages(exclude=("tests", "benchmark_images.py")),
     include_package_data=True,
     install_requires=["numpy", "tqdm"],
 )

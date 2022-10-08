@@ -52,13 +52,6 @@ Reading from a ``RaggedMmap`` is several hundred times faster than reading ``.jp
 Check https://github.com/hristo-vrigazov/mmap.ninja#memory-mapping-images-with-different-shapes for benchmarks and
 Colab notebooks.
 
-.. toctree::
-   :maxdepth: 2
-   :caption: API reference:
-
-   modules
-
-
 String samples
 ====================================
 
@@ -91,7 +84,8 @@ Samples of the same shape
 
 Initialize once per project::
 
-   from mmap_ninja import base
+   from mmap_ninja import numpy as np_ninja
+
    memmap = np_ninja.from_generator(
       simple_gen(),
       tmp_path / 'generator',
@@ -100,6 +94,20 @@ Initialize once per project::
       verbose=True
    )
 
+Once created, you can open the map by simply supplying the path to the memory map::
+
+   from mmap_ninja import numpy as np_ninja
+
+   memmap = np_ninja.open_existing(tmp_path / 'growable')
+   print(texts[123])  # Prints the 123-th text
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API reference:
+
+   modules
+
+
 
 Indices and tables
 ==================
@@ -107,3 +115,5 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
