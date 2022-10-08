@@ -60,9 +60,7 @@ In the example below, we convert a list of strings to a ``StringsMmap``.
 Initialize once per project::
 
    from mmap_ninja.string import StringsMmap
-   from sklearn.datasets import fetch_20newsgroups
 
-   data = fetch_20newsgroups()
    memmap = StringsMmap.from_generator(
       out_dir='<OUTPUT PATH>',
       sample_generator=generate_strs(),
@@ -87,10 +85,10 @@ Initialize once per project::
    from mmap_ninja import numpy as np_ninja
 
    memmap = np_ninja.from_generator(
-      simple_gen(),
-      tmp_path / 'generator',
-      n=30,
+      out_dir=tmp_path / 'generator',
+      sample_generator=simple_gen(),
       batch_size=4,
+      n=30,
       verbose=True
    )
 
@@ -99,7 +97,7 @@ Once created, you can open the map by simply supplying the path to the memory ma
    from mmap_ninja import numpy as np_ninja
 
    memmap = np_ninja.open_existing(tmp_path / 'growable')
-   print(texts[123])  # Prints the 123-th text
+   print(memmap[123])  # Prints the 123-th sample
 
 .. toctree::
    :maxdepth: 2
