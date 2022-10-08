@@ -144,7 +144,7 @@ def from_generator(sample_generator,
                    n: int,
                    verbose=False) -> np.memmap:
     """
-    Create a numpy array from a sample generator.
+    Create a numpy memory-map from a sample generator.
 
     :param sample_generator: A generator of the samples
     :param out_dir: The output directory
