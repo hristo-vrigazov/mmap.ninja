@@ -1,5 +1,5 @@
 ```
-sphinx-apidoc ../python/mmap_ninja
+sphinx-apidoc -o . ../python/mmap_ninja
 ```
 
 ```

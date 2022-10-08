@@ -6,6 +6,8 @@
 Welcome to mmap_ninja's documentation!
 ======================================
 
+mmap-ninja is super cool!
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
