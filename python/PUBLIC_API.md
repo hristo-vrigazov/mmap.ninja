@@ -25,7 +25,8 @@ Ragged API:
 String API:
 
 1. [Create a StringsMmap from list of strings](#create-a-stringsmmap-from-list-of-strings)
-2. 
+2. [Create a StringsMmap from a string generator](#create-a-stringsmmap-from-a-string-generator)
+
 
 ### Wrapped
 
@@ -202,4 +203,28 @@ from mmap_ninja.string import StringsMmap
 list_of_strings = ["foo", "bar", "bidon", "zele", "slanina"]
 
 memmap = StringsMmap.from_strings("strings_memmap", list_of_strings, verbose=True)
+```
+
+### Create a StringsMmap from a string generator
+
+Sometimes, the list of strings cannot fit into memory.
+In these cases, you can initialize a `StringsMmap` from a generator,
+flushing every `batch_size` samples to disk, and optionally, a progress bar can be shown
+(`verbose=True`) during the conversion using `tqdm`, since the conversion usually takes a long time.
+ 
+```python
+from pathlib import Path
+from mmap_ninja.string import StringsMmap
+
+def generate_strs(n):
+    for i in range(n):
+        yield str(i)
+
+
+memmap = StringsMmap.from_generator(
+    out_dir="strings_mmap",
+    sample_generator=generate_strs(1_000_000_000),
+    batch_size=1024,
+    verbose=True
+)
 ```
