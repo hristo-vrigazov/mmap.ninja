@@ -4,15 +4,23 @@ Here, you can find a full list of the things you can do with `mmap-ninja`.
 
 ## Contents
 
+Utils API:
+
 1. [Wrapped](#wrapped)
-2. [Create a Numpy memmap from a Numpy array](#create-a-numpy-memmap-from-a-numpy-array)
-3. [Create a Numpy memmap from a generator](#create-a-numpy-memmap-from-a-generator)
-4. [Open existing Numpy memmap](#open-existing-numpy-memmap)
-5. [Append new samples to a Numpy memmap](#append-new-samples-to-a-numpy-memmap)
-6. [Create a RaggedMmap from list of samples](#create-a-raggedmmap-from-list-of-samples)
-7. [Create a RaggedMmap from a generator](#create-a-raggedmmap-from-a-generator)
-8. [Open an existing RaggedMmap](#open-an-existing-raggedmmap)
-9. [Append new samples to a RaggedMmap](#append-new-samples-to-a-raggedmmap)
+
+Numpy API:
+
+1. [Create a Numpy memmap from a Numpy array](#create-a-numpy-memmap-from-a-numpy-array)
+2. [Create a Numpy memmap from a generator](#create-a-numpy-memmap-from-a-generator)
+3. [Open existing Numpy memmap](#open-existing-numpy-memmap)
+4. [Append new samples to a Numpy memmap](#append-new-samples-to-a-numpy-memmap)
+
+Ragged API:
+
+1. [Create a RaggedMmap from list of samples](#create-a-raggedmmap-from-list-of-samples)
+2. [Create a RaggedMmap from a generator](#create-a-raggedmmap-from-a-generator)
+3. [Open an existing RaggedMmap](#open-an-existing-raggedmmap)
+4. [Append new samples to a RaggedMmap](#append-new-samples-to-a-raggedmmap)
 
 ### Wrapped
 
