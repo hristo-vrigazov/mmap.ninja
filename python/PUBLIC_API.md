@@ -123,3 +123,43 @@ val_images = RaggedMmap.from_generator(
     verbose=True
 )
 ```
+
+### Open an existing RaggedMmap
+
+Once the `RaggedMmap` has been created, just open it using its
+constructor:
+
+```python
+import numpy as np
+from mmap_ninja.ragged import RaggedMmap
+
+images = RaggedMmap('val_images')
+assert isinstance(np.ndarray, images[4])
+```
+
+For convenience, you can also pass in a wrapper function to be applied
+to every sample after `__getitem__`.
+
+```python
+import numpy as np
+import torch
+from mmap_ninja.ragged import RaggedMmap
+
+images = RaggedMmap('val_images', wrapper_fn=torch.tensor)
+assert isinstance(np.ndarray, images[4])
+```
+
+### Append new samples to a RaggedMmap
+
+To append a single sample, use `RaggedMmap.append`.
+
+To append multiple samples, use `RaggedMmap.extend`.
+
+```python
+import numpy as np
+from mmap_ninja.ragged import RaggedMmap
+
+mmap = RaggedMmap('samples')
+new_samples = [np.array([123, -1]), np.array([-1, 0, 123, 92, 12])]
+mmap.extend(new_samples)
+```
