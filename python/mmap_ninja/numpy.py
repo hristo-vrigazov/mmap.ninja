@@ -29,9 +29,9 @@ def save_mmap_kwargs(out_dir: Path, dtype: Union[np.dtype, str], shape: Sequence
     :return:
     """
     out_dir = mkdir(out_dir)
-    base.str_to_file(np.dtype(dtype).name, out_dir / f"dtype.ninja")
-    base.shape_to_file(shape, out_dir / f"shape.ninja")
-    base.str_to_file(order, out_dir / f"order.ninja")
+    base._str_to_file(np.dtype(dtype).name, out_dir / f"dtype.ninja")
+    base._shape_to_file(shape, out_dir / f"shape.ninja")
+    base._str_to_file(order, out_dir / f"order.ninja")
 
 
 def read_mmap_kwargs(out_dir: Path) -> Dict:
@@ -43,9 +43,9 @@ def read_mmap_kwargs(out_dir: Path) -> Dict:
     """
     out_dir = mkdir(out_dir)
     return {
-        "dtype": base.file_to_str(out_dir / "dtype.ninja"),
-        "shape": base.file_to_shape(out_dir / "shape.ninja"),
-        "order": base.file_to_str(out_dir / "order.ninja"),
+        "dtype": base._file_to_str(out_dir / "dtype.ninja"),
+        "shape": base._file_to_shape(out_dir / "shape.ninja"),
+        "order": base._file_to_str(out_dir / "order.ninja"),
     }
 
 
@@ -189,7 +189,7 @@ def extend_dir(out_dir: Union[str, Path], arr: np.ndarray) -> None:
         data_file.write(arr.astype(dtype).tobytes(order=order))
         data_file.flush()
     new_shape = (shape[0] + arr.shape[0], *shape[1:])
-    base.shape_to_file(new_shape, out_dir / f"shape.ninja")
+    base._shape_to_file(new_shape, out_dir / f"shape.ninja")
 
 
 def extend(np_mmap: np.memmap, arr: np.ndarray) -> None:

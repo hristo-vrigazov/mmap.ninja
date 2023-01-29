@@ -39,7 +39,7 @@ class RaggedMmap:
         self.out_dir = out_dir
         self.wrapper_fn = wrapper_fn
         self.mode = mode
-        self.shapes_are_flat = bool(base.file_to_int(self.out_dir / "shapes_are_flat.ninja"))
+        self.shapes_are_flat = bool(base._file_to_int(self.out_dir / "shapes_are_flat.ninja"))
 
         self.shapes_ctor = numpy.open_existing if self.shapes_are_flat else RaggedMmap
 
@@ -133,7 +133,7 @@ class RaggedMmap:
         numpy.from_ndarray(out_dir / starts_key, np.array(numpy_bytes_slices.starts, dtype=np.int64))
         numpy.from_ndarray(out_dir / ends_key, np.array(numpy_bytes_slices.ends, dtype=np.int64))
         shapes_are_flat = all([len(shape) == 1 for shape in numpy_bytes_slices.shapes])
-        base.int_to_file(int(shapes_are_flat), out_dir / "shapes_are_flat.ninja")
+        base._int_to_file(int(shapes_are_flat), out_dir / "shapes_are_flat.ninja")
         if shapes_are_flat:
             numpy.from_ndarray(out_dir / shapes_key, numpy_bytes_slices.shapes)
         else:
@@ -154,7 +154,7 @@ class RaggedMmap:
 
     @classmethod
     def from_generator(cls, out_dir: Union[str, Path], sample_generator, batch_size: int, verbose=False, **kwargs):
-        return base.from_generator_base(
+        return base._from_generator_base(
             out_dir=out_dir,
             sample_generator=sample_generator,
             batch_size=batch_size,

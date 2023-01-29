@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Union, Sequence, List
 
 
-def bytes_to_int(inp: bytes, fmt: str = "<i") -> int:
+def _bytes_to_int(inp: bytes, fmt: str = "<i") -> int:
     """
     Utility function for converting bytes into int.
 
@@ -15,7 +15,7 @@ def bytes_to_int(inp: bytes, fmt: str = "<i") -> int:
     return struct.unpack(fmt, inp)[0]
 
 
-def int_to_bytes(inp: int, fmt: str = "<i") -> bytes:
+def _int_to_bytes(inp: int, fmt: str = "<i") -> bytes:
     """
     Stores an integer as bytes
 
@@ -26,7 +26,7 @@ def int_to_bytes(inp: int, fmt: str = "<i") -> bytes:
     return struct.pack(fmt, inp)
 
 
-def bytes_to_str(inp: bytes, encoding: str = "utf-8") -> str:
+def _bytes_to_str(inp: bytes, encoding: str = "utf-8") -> str:
     """
     Reads bytes into a string.
 
@@ -37,7 +37,7 @@ def bytes_to_str(inp: bytes, encoding: str = "utf-8") -> str:
     return inp.decode(encoding)
 
 
-def str_to_bytes(inp: str, encoding: str = "utf-8") -> bytes:
+def _str_to_bytes(inp: str, encoding: str = "utf-8") -> bytes:
     """
     Dumps string as bytes
 
@@ -48,7 +48,7 @@ def str_to_bytes(inp: str, encoding: str = "utf-8") -> bytes:
     return inp.encode(encoding)
 
 
-def int_to_file(inp: int, file: Union[str, Path], *args, **kwargs) -> None:
+def _int_to_file(inp: int, file: Union[str, Path], *args, **kwargs) -> None:
     """
     Utility function, which writes an integer as bytes in a given file.
 
@@ -59,10 +59,10 @@ def int_to_file(inp: int, file: Union[str, Path], *args, **kwargs) -> None:
     :return:
     """
     with open(file, "wb") as out_file:
-        out_file.write(int_to_bytes(inp, *args, **kwargs))
+        out_file.write(_int_to_bytes(inp, *args, **kwargs))
 
 
-def file_to_int(file: Union[str, Path], *args, **kwargs) -> int:
+def _file_to_int(file: Union[str, Path], *args, **kwargs) -> int:
     """
     Reads an integer from a file
 
@@ -72,10 +72,10 @@ def file_to_int(file: Union[str, Path], *args, **kwargs) -> int:
     :return: the integer
     """
     with open(file, "rb") as in_file:
-        return bytes_to_int(in_file.read(), *args, **kwargs)
+        return _bytes_to_int(in_file.read(), *args, **kwargs)
 
 
-def str_to_file(inp: str, file: Union[str, Path], *args, **kwargs) -> None:
+def _str_to_file(inp: str, file: Union[str, Path], *args, **kwargs) -> None:
     """
     Stores a string to a file
 
@@ -86,10 +86,10 @@ def str_to_file(inp: str, file: Union[str, Path], *args, **kwargs) -> None:
     :return:
     """
     with open(file, "wb") as out_file:
-        out_file.write(str_to_bytes(inp, *args, **kwargs))
+        out_file.write(_str_to_bytes(inp, *args, **kwargs))
 
 
-def file_to_str(file: Union[str, Path], *args, **kwargs) -> str:
+def _file_to_str(file: Union[str, Path], *args, **kwargs) -> str:
     """
     Read string from file.
 
@@ -99,10 +99,10 @@ def file_to_str(file: Union[str, Path], *args, **kwargs) -> str:
     :return: The string
     """
     with open(file, "rb") as in_file:
-        return bytes_to_str(in_file.read(), *args, **kwargs)
+        return _bytes_to_str(in_file.read(), *args, **kwargs)
 
 
-def shape_to_bytes(shape: Sequence[int], fmt: str = "<Q") -> bytes:
+def _shape_to_bytes(shape: Sequence[int], fmt: str = "<Q") -> bytes:
     """
     Returns the shape of numpy array as a byte array.
 
@@ -112,11 +112,11 @@ def shape_to_bytes(shape: Sequence[int], fmt: str = "<Q") -> bytes:
     """
     res = bytearray()
     for axis_len in shape:
-        res.extend(int_to_bytes(axis_len, fmt=fmt))
+        res.extend(_int_to_bytes(axis_len, fmt=fmt))
     return bytes(res)
 
 
-def bytes_to_shape(inp: bytes, step=8, fmt: str = "<Q") -> Sequence[int]:
+def _bytes_to_shape(inp: bytes, step=8, fmt: str = "<Q") -> Sequence[int]:
     """
     Reads shape tuple from bytes.
 
@@ -128,11 +128,11 @@ def bytes_to_shape(inp: bytes, step=8, fmt: str = "<Q") -> Sequence[int]:
     res = []
     for start in range(0, len(inp) - 1, step):
         end = start + step
-        res.append(bytes_to_int(inp[start:end], fmt=fmt))
+        res.append(_bytes_to_int(inp[start:end], fmt=fmt))
     return tuple(res)
 
 
-def shape_to_file(shape: Sequence[int], file: Union[str, Path]) -> None:
+def _shape_to_file(shape: Sequence[int], file: Union[str, Path]) -> None:
     """
     Write a shape sequence to a file
 
@@ -141,10 +141,10 @@ def shape_to_file(shape: Sequence[int], file: Union[str, Path]) -> None:
     :return:
     """
     with open(file, "wb") as out_file:
-        out_file.write(shape_to_bytes(shape))
+        out_file.write(_shape_to_bytes(shape))
 
 
-def file_to_shape(file: Union[str, Path]) -> Sequence[int]:
+def _file_to_shape(file: Union[str, Path]) -> Sequence[int]:
     """
     Read shape from file
 
@@ -152,7 +152,7 @@ def file_to_shape(file: Union[str, Path]) -> Sequence[int]:
     :return: the shape as a tuple
     """
     with open(file, "rb") as out_file:
-        return bytes_to_shape(out_file.read())
+        return _bytes_to_shape(out_file.read())
 
 
 @dataclass
@@ -162,7 +162,7 @@ class BytesSlices:
     ends: List[int]
 
 
-def sequence_of_strings_to_bytes(strings: Sequence[str], verbose=False) -> BytesSlices:
+def _sequence_of_strings_to_bytes(strings: Sequence[str], verbose=False) -> BytesSlices:
     """
     Converts a sequence of strings to a bytes array
 
@@ -177,14 +177,14 @@ def sequence_of_strings_to_bytes(strings: Sequence[str], verbose=False) -> Bytes
         from tqdm import tqdm
         strings = tqdm(strings)
     for string in strings:
-        arr = str_to_bytes(string)
+        arr = _str_to_bytes(string)
         starts.append(len(buffer))
         ends.append(len(buffer) + len(arr))
         buffer.extend(arr)
     return BytesSlices(bytes(buffer), starts, ends)
 
 
-def from_generator_base(sample_generator, out_dir, batch_size, batch_ctor, **kwargs):
+def _from_generator_base(sample_generator, out_dir, batch_size, batch_ctor, **kwargs):
     """
     Creates an output from a generator, flushing every batch to disk.
 

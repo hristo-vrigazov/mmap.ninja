@@ -5,7 +5,7 @@ from typing import Sequence, Union
 import numpy as np
 
 from mmap_ninja import numpy, base
-from mmap_ninja.base import bytes_to_str, str_to_bytes, sequence_of_strings_to_bytes
+from mmap_ninja.base import _bytes_to_str, _str_to_bytes, _sequence_of_strings_to_bytes
 
 
 class StringsMmap:
@@ -38,7 +38,7 @@ class StringsMmap:
     def get_single(self, item):
         start = self.starts[item]
         end = self.ends[item]
-        return bytes_to_str(self.buffer[start:end])
+        return _bytes_to_str(self.buffer[start:end])
 
     def __getitem__(self, item):
         if np.isscalar(item):
@@ -61,14 +61,14 @@ class StringsMmap:
     def set_single(self, idx, new_value):
         start = self.starts[idx]
         end = self.ends[idx]
-        self.buffer[start:end] = str_to_bytes(new_value)
+        self.buffer[start:end] = _str_to_bytes(new_value)
 
     def close(self):
         self.buffer.close()
         self.file.close()
 
     def extend(self, list_of_strings: Sequence[str], verbose=False):
-        bytes_slices = sequence_of_strings_to_bytes(list_of_strings, verbose=verbose)
+        bytes_slices = _sequence_of_strings_to_bytes(list_of_strings, verbose=verbose)
         end = self.ends[-1]
         start_offsets = end + bytes_slices.starts
         end_offsets = end + bytes_slices.ends
@@ -101,7 +101,7 @@ class StringsMmap:
     ):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
-        bytes_slices = sequence_of_strings_to_bytes(strings, verbose=verbose)
+        bytes_slices = _sequence_of_strings_to_bytes(strings, verbose=verbose)
         with open(out_dir / "data.ninja", "wb") as f:
             f.write(bytes_slices.buffer)
         numpy.from_ndarray(out_dir / starts_key, np.array(bytes_slices.starts, dtype=np.int64))
@@ -110,7 +110,7 @@ class StringsMmap:
 
     @classmethod
     def from_generator(cls, out_dir: Union[str, Path], sample_generator, batch_size: int, verbose=False, **kwargs):
-        return base.from_generator_base(
+        return base._from_generator_base(
             out_dir=out_dir,
             sample_generator=sample_generator,
             batch_size=batch_size,
