@@ -22,6 +22,11 @@ Ragged API:
 3. [Open an existing RaggedMmap](#open-an-existing-raggedmmap)
 4. [Append new samples to a RaggedMmap](#append-new-samples-to-a-raggedmmap)
 
+String API:
+
+1. [Create a StringsMmap from list of strings](#create-a-stringsmmap-from-list-of-strings)
+2. 
+
 ### Wrapped
 
 The `Wrapped` class allows you to lazily apply a function
@@ -184,4 +189,17 @@ from mmap_ninja.ragged import RaggedMmap
 mmap = RaggedMmap('samples')
 new_samples = [np.array([123, -1]), np.array([-1, 0, 123, 92, 12])]
 mmap.extend(new_samples)
+```
+
+### Create a StringsMmap from list of strings
+
+To create a `StringsMmap` from a list of strings, use the
+`StringsMmap.from_strings` method:
+
+```python
+from mmap_ninja.string import StringsMmap
+
+list_of_strings = ["foo", "bar", "bidon", "zele", "slanina"]
+
+memmap = StringsMmap.from_strings("strings_memmap", list_of_strings, verbose=True)
 ```
