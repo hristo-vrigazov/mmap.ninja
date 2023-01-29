@@ -26,7 +26,7 @@ String API:
 
 1. [Create a StringsMmap from list of strings](#create-a-stringsmmap-from-list-of-strings)
 2. [Create a StringsMmap from a string generator](#create-a-stringsmmap-from-a-string-generator)
-
+3. [Open an existing StringsMmap](#open-an-existing-stringsmmap)
 
 ### Wrapped
 
@@ -228,3 +228,16 @@ memmap = StringsMmap.from_generator(
     verbose=True
 )
 ```
+
+### Open an existing StringsMmap
+
+Once the `StringsMmap` has been created, just open it using its
+constructor:
+
+```python
+from mmap_ninja.string import StringsMmap
+
+memmap = StringsMmap('strings_mmap')
+```
+
+Now you can access its elements using indexing, e.g. `memmap[5]` is a `str`.
