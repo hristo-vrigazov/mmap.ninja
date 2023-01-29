@@ -74,3 +74,14 @@ memmap = np_ninja.from_ndarray("growable", arr)
 np_ninja.extend(memmap, np.arange(11, 13))
 np_ninja.extend_dir("growable", np.arange(14, 16))
 ```
+
+### Open existing Numpy memmap
+
+Once you have created a `np.memmap`, you can open it
+in later stages of the project using `np_ninja.open_existing`
+
+```python
+from mmap_ninja import numpy as np_ninja
+
+memmap = np_ninja.open_existing("growable")
+```
