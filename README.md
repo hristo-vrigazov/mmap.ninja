@@ -12,7 +12,9 @@ pip install mmap_ninja
 [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing)
 [![Build Status](https://app.travis-ci.com/hristo-vrigazov/mmap.ninja.svg?branch=master)](https://app.travis-ci.com/hristo-vrigazov/mmap.ninja)
 [![codecov](https://codecov.io/gh/hristo-vrigazov/mmap.ninja/branch/master/graph/badge.svg?token=YUCO0KJONB)](https://codecov.io/gh/hristo-vrigazov/mmap.ninja)
-[![PyPI download month](https://img.shields.io/pypi/dm/mmap_ninja.svg)](https://pypi.python.org/pypi/mmap_ninja/)[![Downloads](https://static.pepy.tech/badge/mmap-ninja/month)](https://pepy.tech/project/mmap-ninja)[![PyPi version](https://badgen.net/pypi/v/mmap_ninja/)](https://pypi.com/project/mmap_ninja)
+[![PyPI download month](https://img.shields.io/pypi/dm/mmap_ninja.svg)](https://pypi.python.org/pypi/mmap_ninja/)
+[![Downloads](https://static.pepy.tech/badge/mmap-ninja/month)](https://pepy.tech/project/mmap-ninja)
+[![PyPi version](https://badgen.net/pypi/v/mmap_ninja/)](https://pypi.com/project/mmap_ninja)
 [![PyPI license](https://img.shields.io/pypi/l/mmap_ninja.svg)](https://pypi.python.org/pypi/mmap_ninja/)
 
 Microlib docs can be found [here](./MICROLIB.md). 
