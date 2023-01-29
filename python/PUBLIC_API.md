@@ -12,7 +12,7 @@ Numpy API:
 
 1. [Create a Numpy memmap from a Numpy array](#create-a-numpy-memmap-from-a-numpy-array)
 2. [Create a Numpy memmap from a generator](#create-a-numpy-memmap-from-a-generator)
-3. [Open existing Numpy memmap](#open-existing-numpy-memmap)
+3. [Open an existing Numpy memmap](#open-an-existing-numpy-memmap)
 4. [Append new samples to a Numpy memmap](#append-new-samples-to-a-numpy-memmap)
 
 Ragged API:
@@ -85,7 +85,7 @@ np_ninja.from_generator(
 )
 ```
 
-### Open existing Numpy memmap
+### Open an existing Numpy memmap
 
 Once you have created a `np.memmap`, you can open it
 in later stages of the project using `np_ninja.open_existing`
