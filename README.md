@@ -16,6 +16,8 @@ pip install mmap_ninja
 [![PyPi version](https://badgen.net/pypi/v/mmap_ninja/)](https://pypi.com/project/mmap_ninja)
 [![PyPI license](https://img.shields.io/pypi/l/mmap_ninja.svg)](https://pypi.python.org/pypi/mmap_ninja/)
 
+Microlib docs can be found [here](./PUBLIC_API.md). 
+
 ## Contents
 
 1. [Quick example](#quick-example)
