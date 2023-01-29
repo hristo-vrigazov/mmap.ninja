@@ -86,4 +86,40 @@ from mmap_ninja import numpy as np_ninja
 memmap = np_ninja.open_existing("growable")
 ```
 
-### 
+Once you have opened it, you can do all the usual numpy operations
+on the `np.memmap`.
+
+### Create a RaggedMmap from list of samples
+
+If your samples are of different shapes, then you should use
+`RaggedMmap`. If they all fit into memory, you can use the
+`from_lists` class method:
+
+```python
+import numpy as np
+from mmap_ninja.ragged import RaggedMmap
+
+simple = [np.array([11, 13, -1, 17]), np.array([2, 3, 4, 19]), np.array([90, 12])]
+RaggedMmap.from_lists("simple", simple)
+```
+
+### Create a RaggedMmap from a generator
+
+If your samples don't fit into memory, you can initialize
+it from a generator, which yields samples (a sample is a `np.ndarray`).
+This method flushes to disk every `batch_size` samples. Optionally, a progress bar can be shown
+during the conversion using `tqdm`, since the conversion usually takes a long time.
+
+```python
+import matplotlib.pyplot as plt
+from mmap_ninja.ragged import RaggedMmap
+from pathlib import Path
+
+img_path = Path('<PATH TO IMAGE DATASET>')
+val_images = RaggedMmap.from_generator(
+    out_dir='val_images', 
+    sample_generator=map(plt.imread, img_path.iterdir()), 
+    batch_size=1024, 
+    verbose=True
+)
+```
