@@ -2,6 +2,18 @@
 
 Here, you can find a full list of the things you can do with `mmap-ninja`.
 
+## Contents
+
+1. [Wrapped](#wrapped)
+2. [Create a Numpy memmap from a Numpy array](#create-a-numpy-memmap-from-a-numpy-array)
+3. [Create a Numpy memmap from a generator](#create-a-numpy-memmap-from-a-generator)
+4. [Open existing Numpy memmap](#open-existing-numpy-memmap)
+5. [Append new samples to a Numpy memmap](#append-new-samples-to-a-numpy-memmap)
+6. [Create a RaggedMmap from list of samples](#create-a-raggedmmap-from-list-of-samples)
+7. [Create a RaggedMmap from a generator](#create-a-raggedmmap-from-a-generator)
+8. [Open an existing RaggedMmap](#open-an-existing-raggedmmap)
+9. [Append new samples to a RaggedMmap](#append-new-samples-to-a-raggedmmap)
+
 ### Wrapped
 
 The `Wrapped` class allows you to lazily apply a function
@@ -31,7 +43,6 @@ arr = np.random.randn(200, 224, 224, 3)
 np_ninja.from_ndarray('imgs_mmap', arr)
 ```
 
-
 ### Create a Numpy memmap from a generator
 
 Very often, you cannot load the whole dataset into memory.
@@ -57,6 +68,20 @@ np_ninja.from_generator(
 )
 ```
 
+### Open existing Numpy memmap
+
+Once you have created a `np.memmap`, you can open it
+in later stages of the project using `np_ninja.open_existing`
+
+```python
+from mmap_ninja import numpy as np_ninja
+
+memmap = np_ninja.open_existing("growable")
+```
+
+Once you have opened it, you can do all the usual numpy operations
+on the `np.memmap`.
+
 ### Append new samples to a Numpy memmap
 
 To append/extend new sample, just use the `np_ninja.extend`
@@ -74,20 +99,6 @@ memmap = np_ninja.from_ndarray("growable", arr)
 np_ninja.extend(memmap, np.arange(11, 13))
 np_ninja.extend_dir("growable", np.arange(14, 16))
 ```
-
-### Open existing Numpy memmap
-
-Once you have created a `np.memmap`, you can open it
-in later stages of the project using `np_ninja.open_existing`
-
-```python
-from mmap_ninja import numpy as np_ninja
-
-memmap = np_ninja.open_existing("growable")
-```
-
-Once you have opened it, you can do all the usual numpy operations
-on the `np.memmap`.
 
 ### Create a RaggedMmap from list of samples
 
