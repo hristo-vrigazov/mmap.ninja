@@ -8,7 +8,7 @@ import numpy as np
 from mmap_ninja import base
 
 
-def mkdir(out_dir: Union[str, Path]) -> Path:
+def _create_if_not_exists(out_dir: Union[str, Path]) -> Path:
     """
     A helper mkdir that creates the directory if it doesn't exist.
     Returns the path to the directory.created.
@@ -18,7 +18,7 @@ def mkdir(out_dir: Union[str, Path]) -> Path:
     return out_dir
 
 
-def save_mmap_kwargs(out_dir: Path, dtype: Union[np.dtype, str], shape: Sequence[int], order: str) -> None:
+def _save_mmap_kwargs(out_dir: Path, dtype: Union[np.dtype, str], shape: Sequence[int], order: str) -> None:
     """
     Persists the arguments needed for initializing a ``np.memmap``, so that the user does not have to specify them.
 
@@ -28,20 +28,20 @@ def save_mmap_kwargs(out_dir: Path, dtype: Union[np.dtype, str], shape: Sequence
     :param order: A string, representing the order - ``"F"`` or ``"C"``
     :return:
     """
-    out_dir = mkdir(out_dir)
+    out_dir = _create_if_not_exists(out_dir)
     base._str_to_file(np.dtype(dtype).name, out_dir / f"dtype.ninja")
     base._shape_to_file(shape, out_dir / f"shape.ninja")
     base._str_to_file(order, out_dir / f"order.ninja")
 
 
-def read_mmap_kwargs(out_dir: Path) -> Dict:
+def _read_mmap_kwargs(out_dir: Path) -> Dict:
     """
     Reads already persisted arguments needed for opening a ``np.memmap``.
 
     :param out_dir: The persistence directory of the ``np.memmap``.
     :return: A dictionary representing the ``kwargs`` needed for initialization.
     """
-    out_dir = mkdir(out_dir)
+    out_dir = _create_if_not_exists(out_dir)
     return {
         "dtype": base._file_to_str(out_dir / "dtype.ninja"),
         "shape": base._file_to_shape(out_dir / "shape.ninja"),
@@ -49,7 +49,7 @@ def read_mmap_kwargs(out_dir: Path) -> Dict:
     }
 
 
-def empty(
+def _empty(
     out_dir: Union[str, Path],
     dtype: Union[str, np.dtype],
     shape: Sequence[int],
@@ -64,8 +64,8 @@ def empty(
     :param order: The order, either ``"C"`` or ``"F"``
     :return:
     """
-    out_dir = mkdir(out_dir)
-    save_mmap_kwargs(out_dir, dtype, shape, order)
+    out_dir = _create_if_not_exists(out_dir)
+    _save_mmap_kwargs(out_dir, dtype, shape, order)
     memmap = np.memmap(str(out_dir / "data.ninja"), mode="w+", dtype=dtype, shape=shape, order=order)
     return memmap
 
@@ -79,17 +79,17 @@ def from_ndarray(out_dir: Union[str, Path], arr: np.ndarray) -> np.memmap:
     :return: The memory mapped file
     """
     arr = np.asarray(arr)
-    out_dir = mkdir(out_dir)
+    out_dir = _create_if_not_exists(out_dir)
     dtype = arr.dtype
     shape = arr.shape
     order = "F" if np.isfortran(arr) else "C"
     memmap = np.memmap(str(out_dir / "data.ninja"), mode="w+", dtype=dtype, shape=shape, order=order)
     memmap[:] = arr
-    save_mmap_kwargs(out_dir, dtype, shape, order)
+    _save_mmap_kwargs(out_dir, dtype, shape, order)
     return memmap
 
 
-def write_samples(
+def _write_samples(
     memmap: Optional[np.memmap],
     out_dir: Path,
     samples: Sequence[np.ndarray],
@@ -135,7 +135,7 @@ def from_generator(out_dir: Union[str, Path], sample_generator, batch_size: int,
     :param verbose: Whether to show the progress bar.
     :return:
     """
-    out_dir = mkdir(out_dir)
+    out_dir = _create_if_not_exists(out_dir)
     samples = []
     memmap = None
     start = 0
@@ -147,10 +147,10 @@ def from_generator(out_dir: Union[str, Path], sample_generator, batch_size: int,
         samples.append(sample)
         if len(samples) % batch_size != 0:
             continue
-        memmap, start = write_samples(memmap, out_dir, samples, start, n)
+        memmap, start = _write_samples(memmap, out_dir, samples, start, n)
         samples = []
     if len(samples) > 0:
-        memmap, start = write_samples(memmap, out_dir, samples, start, n)
+        memmap, start = _write_samples(memmap, out_dir, samples, start, n)
     return memmap
 
 
@@ -163,7 +163,7 @@ def open_existing(out_dir: Union[str, Path], mode="r") -> np.memmap:
     :return: The ``np.memmap`` object.
     """
     out_dir = Path(out_dir)
-    kwargs = read_mmap_kwargs(out_dir)
+    kwargs = _read_mmap_kwargs(out_dir)
     memmap = np.memmap(str(out_dir / "data.ninja"), mode=mode, **kwargs)
     return memmap
 
@@ -178,7 +178,7 @@ def extend_dir(out_dir: Union[str, Path], arr: np.ndarray) -> None:
     """
     arr = np.asarray(arr)
     out_dir = Path(out_dir)
-    kwargs = read_mmap_kwargs(out_dir)
+    kwargs = _read_mmap_kwargs(out_dir)
     shape = kwargs["shape"]
     order = kwargs["order"]
     dtype = np.dtype(kwargs["dtype"])
@@ -212,7 +212,7 @@ class NumpyBytesSlices:
     shapes: List[Tuple[int]]
 
 
-def lists_of_ndarrays_to_bytes(lists: Sequence[np.ndarray], dtype) -> NumpyBytesSlices:
+def _lists_of_ndarrays_to_bytes(lists: Sequence[np.ndarray], dtype) -> NumpyBytesSlices:
     """
     Converts a list of numpy arrays into bytes.
 

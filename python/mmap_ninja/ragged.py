@@ -97,7 +97,7 @@ class RaggedMmap:
         self.extend([array])
 
     def extend(self, arrays: Sequence[np.ndarray]):
-        numpy_bytes_slices = numpy.lists_of_ndarrays_to_bytes(arrays, self.memmap.dtype)
+        numpy_bytes_slices = numpy._lists_of_ndarrays_to_bytes(arrays, self.memmap.dtype)
         numpy.extend(self.memmap, numpy_bytes_slices.buffer)
         end = self.ends[-1]
         numpy.extend(self.starts, end + numpy_bytes_slices.starts)
@@ -129,7 +129,7 @@ class RaggedMmap:
     ):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
-        numpy_bytes_slices = numpy.lists_of_ndarrays_to_bytes(lists, dtype)
+        numpy_bytes_slices = numpy._lists_of_ndarrays_to_bytes(lists, dtype)
         numpy.from_ndarray(out_dir / starts_key, np.array(numpy_bytes_slices.starts, dtype=np.int64))
         numpy.from_ndarray(out_dir / ends_key, np.array(numpy_bytes_slices.ends, dtype=np.int64))
         shapes_are_flat = all([len(shape) == 1 for shape in numpy_bytes_slices.shapes])

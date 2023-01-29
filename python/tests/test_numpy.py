@@ -13,7 +13,7 @@ def test_numpy(tmp_path):
 
 def test_numpy_from_empty(tmp_path):
     arr = np.arange(10)
-    memmap = np_ninja.empty(tmp_path / "numpy_mmap", dtype=np.int64, shape=(10,), order="C")
+    memmap = np_ninja._empty(tmp_path / "numpy_mmap", dtype=np.int64, shape=(10,), order="C")
     memmap[:] = arr
 
 
