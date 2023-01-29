@@ -6,11 +6,11 @@ import numpy as np
 from mmap_ninja import numpy, base
 
 
-def np_shape_extend(shapes, arr):
+def _np_shape_extend(shapes, arr):
     numpy.extend(shapes, arr)
 
 
-def ragged_shape_extend(shapes, arr):
+def _ragged_shape_extend(shapes, arr):
     shapes.extend(arr)
 
 
@@ -51,7 +51,7 @@ class RaggedMmap:
         self.range = np.arange(len(self.starts), dtype=np.int64)
         self.n = len(self.shapes)
         self.range = np.arange(self.n)
-        self.shapes_extension_fn = np_shape_extend if self.shapes_are_flat else ragged_shape_extend
+        self.shapes_extension_fn = _np_shape_extend if self.shapes_are_flat else _ragged_shape_extend
 
     def get_multiple(self, item):
         indices = self.range[item]
