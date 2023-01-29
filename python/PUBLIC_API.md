@@ -27,6 +27,7 @@ String API:
 1. [Create a StringsMmap from list of strings](#create-a-stringsmmap-from-list-of-strings)
 2. [Create a StringsMmap from a string generator](#create-a-stringsmmap-from-a-string-generator)
 3. [Open an existing StringsMmap](#open-an-existing-stringsmmap)
+4. [Append new samples to a StringsMmap](#append-new-samples-to-a-stringsmmap)
 
 ### Wrapped
 
@@ -241,3 +242,18 @@ memmap = StringsMmap('strings_mmap')
 ```
 
 Now you can access its elements using indexing, e.g. `memmap[5]` is a `str`.
+
+
+### Append new samples to a StringsMmap
+
+To append a single string, use `StringsMmap.append`.
+
+To append multiple samples, use `StringsMmap.extend`.
+
+```python
+from mmap_ninja.string import StringsMmap
+
+mmap = StringsMmap('strings_mmap')
+new_samples = ['foo', 'bar']
+mmap.extend(new_samples)
+```
