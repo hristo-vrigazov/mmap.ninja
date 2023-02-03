@@ -134,7 +134,6 @@ class RaggedMmap:
         numpy.from_ndarray(out_dir / ends_key, np.array(numpy_bytes_slices.ends, dtype=np.int64))
         shapes_are_flat = all([len(shape) == 1 for shape in numpy_bytes_slices.shapes])
         base._int_to_file(int(shapes_are_flat), out_dir / "shapes_are_flat.ninja")
-        base._str_to_file("ragged", out_dir / "type.ninja")
 
         if shapes_are_flat:
             numpy.from_ndarray(out_dir / shapes_key, numpy_bytes_slices.shapes)
@@ -144,6 +143,7 @@ class RaggedMmap:
             out_dir / flattened_shapes_key, np.array(numpy_bytes_slices.flattened_shapes, dtype=np.int64)
         )
         numpy.from_ndarray(out_dir, np.array(numpy_bytes_slices.buffer))
+        base._str_to_file("ragged", out_dir / "type.ninja")
         return cls(
             out_dir=out_dir,
             wrapper_fn=wrapper_fn,
