@@ -1,5 +1,6 @@
 import pytest
 
+from mmap_ninja import generic
 from mmap_ninja.string import StringsMmap
 
 
@@ -60,3 +61,4 @@ def test_from_generator(tmp_path, n):
     memmap = StringsMmap.from_generator(tmp_path / "strings_memmap", generate_strs(n), 4, verbose=True)
     for i in range(n):
         assert str(i) == memmap[i]
+    generic.open_existing(tmp_path / "strings_memmap")

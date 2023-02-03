@@ -1,6 +1,6 @@
 import numpy as np
 
-from mmap_ninja import numpy as np_ninja
+from mmap_ninja import numpy as np_ninja, generic
 
 
 def test_numpy(tmp_path):
@@ -28,6 +28,9 @@ def test_numpy_extend(tmp_path):
     assert memmap[3] == 11
     assert memmap[4] == 12
 
+    memmap2 = generic.open_existing(tmp_path / "growable")
+    assert np.all(memmap == memmap2)
+
 
 def test_numpy_extend_alternative_api(tmp_path):
     arr = np.arange(3)
@@ -39,6 +42,9 @@ def test_numpy_extend_alternative_api(tmp_path):
     assert memmap[2] == 2
     assert memmap[3] == 11
     assert memmap[4] == 12
+
+    memmap2 = generic.open_existing(tmp_path / "growable", wrapper_fn=lambda x: x / 20.0)
+    assert np.allclose(memmap / 20.0, memmap2)
 
 
 def simple_gen():
