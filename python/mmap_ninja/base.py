@@ -175,6 +175,7 @@ def _sequence_of_strings_to_bytes(strings: Sequence[str], verbose=False) -> Byte
     ends = []
     if verbose:
         from tqdm import tqdm
+
         strings = tqdm(strings)
     for string in strings:
         arr = _str_to_bytes(string)
@@ -184,7 +185,7 @@ def _sequence_of_strings_to_bytes(strings: Sequence[str], verbose=False) -> Byte
     return BytesSlices(bytes(buffer), starts, ends)
 
 
-def _from_generator_base(sample_generator, out_dir, batch_size, batch_ctor, **kwargs):
+def from_generator_base(sample_generator, out_dir, batch_size, batch_ctor, **kwargs):
     """
     Creates an output from a generator, flushing every batch to disk.
 

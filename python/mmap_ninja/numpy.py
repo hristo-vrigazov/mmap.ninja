@@ -29,6 +29,7 @@ def _save_mmap_kwargs(out_dir: Path, dtype: Union[np.dtype, str], shape: Sequenc
     :return:
     """
     out_dir = _create_if_not_exists(out_dir)
+    base._str_to_file("numpy", out_dir / "type.ninja")
     base._str_to_file(np.dtype(dtype).name, out_dir / f"dtype.ninja")
     base._shape_to_file(shape, out_dir / f"shape.ninja")
     base._str_to_file(order, out_dir / f"order.ninja")

@@ -104,13 +104,14 @@ class StringsMmap:
         bytes_slices = _sequence_of_strings_to_bytes(strings, verbose=verbose)
         with open(out_dir / "data.ninja", "wb") as f:
             f.write(bytes_slices.buffer)
+        base._str_to_file("string", out_dir / "type.ninja")
         numpy.from_ndarray(out_dir / starts_key, np.array(bytes_slices.starts, dtype=np.int64))
         numpy.from_ndarray(out_dir / ends_key, np.array(bytes_slices.ends, dtype=np.int64))
         return cls(out_dir, mode=mode, starts_key=starts_key, ends_key=ends_key)
 
     @classmethod
     def from_generator(cls, out_dir: Union[str, Path], sample_generator, batch_size: int, verbose=False, **kwargs):
-        return base._from_generator_base(
+        return base.from_generator_base(
             out_dir=out_dir,
             sample_generator=sample_generator,
             batch_size=batch_size,
