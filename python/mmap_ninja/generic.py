@@ -8,6 +8,7 @@ from typing import Union, Callable, Optional
 
 
 def open_existing(out_dir: Union[str, Path], wrapper_fn: Optional[Callable] = None):
+    out_dir = Path(out_dir)
     type_str = base._file_to_str(out_dir / "type.ninja")
     if type_str == "numpy":
         memmap = np_ninja.open_existing(out_dir)
