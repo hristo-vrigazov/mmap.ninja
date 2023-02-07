@@ -204,6 +204,16 @@ def extend(np_mmap: np.memmap, arr: np.ndarray) -> None:
     extend_dir(Path(np_mmap.filename).parent, arr)
 
 
+def append(np_mmap: np.memmap, arr: np.ndarray) -> None:
+    """
+    Append a single sample to an already existing numpy array
+
+    :param np_mmap:
+    :param arr:
+    """
+    extend(np_mmap, np.expand_dims(np.asarray(arr), axis=0))
+
+
 @dataclass
 class NumpyBytesSlices:
     buffer: np.ndarray

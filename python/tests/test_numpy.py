@@ -32,6 +32,14 @@ def test_numpy_extend(tmp_path):
     assert np.all(memmap == memmap2)
 
 
+def test_numpy_append(tmp_path):
+    arr = np.arange(3)
+    memmap = np_ninja.from_ndarray(tmp_path / "growable", arr)
+    np_ninja.append(memmap, np.asarray(4))
+    memmap = np_ninja.open_existing(tmp_path / "growable")
+    assert memmap[-1] == 4
+
+
 def test_numpy_extend_alternative_api(tmp_path):
     arr = np.arange(3)
     memmap = np_ninja.from_ndarray(tmp_path / "growable", arr)
