@@ -1,4 +1,4 @@
-# Public API
+# mmap_ninja
 
 Here, you can find a full list of the things you can do with `mmap-ninja`.
 
