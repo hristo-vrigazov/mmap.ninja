@@ -89,6 +89,10 @@ class StringsMmap:
     def append(self, string: str):
         self.extend([string])
 
+    def __repr__(self):
+        base_repr = super().__repr__()
+        return f"{base_repr} of length: {len(self)}"
+
     @classmethod
     def from_strings(
         cls,
@@ -117,5 +121,5 @@ class StringsMmap:
             batch_size=batch_size,
             verbose=verbose,
             batch_ctor=cls.from_strings,
-            **kwargs
+            **kwargs,
         )

@@ -13,7 +13,7 @@ def test_base_case(tmp_path):
         assert i == mmap[i]
     assert len(mmap) == 4
 
-    generic.open_existing(tmp_path / "simple")
+    print(generic.open_existing(tmp_path / "simple"))
 
 
 def test_open_existing_case(tmp_path):

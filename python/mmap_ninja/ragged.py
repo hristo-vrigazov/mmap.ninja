@@ -114,6 +114,10 @@ class RaggedMmap:
         self.n = len(self.shapes)
         self.range = np.arange(self.n)
 
+    def __repr__(self):
+        base_repr = super().__repr__()
+        return f"{base_repr} of length: {len(self)}"
+
     @classmethod
     def from_lists(
         cls,
@@ -162,5 +166,5 @@ class RaggedMmap:
             batch_size=batch_size,
             verbose=verbose,
             batch_ctor=cls.from_lists,
-            **kwargs
+            **kwargs,
         )
