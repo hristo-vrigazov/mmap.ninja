@@ -164,6 +164,8 @@ from mmap_ninja.ragged import RaggedMmap
 
 images = RaggedMmap('val_images')
 assert isinstance(np.ndarray, images[4])
+# len(images) now returns the number of samples
+# images[5] is now a numpy array representing the 5-th sample
 ```
 
 For convenience, you can also pass in a wrapper function to be applied
