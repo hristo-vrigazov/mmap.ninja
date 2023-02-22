@@ -64,5 +64,6 @@ def test_numpy_from_generator(tmp_path):
     memmap = np_ninja.from_generator(
         out_dir=tmp_path / "generator", sample_generator=simple_gen(), n=30, batch_size=4, verbose=True
     )
+    memmap = np_ninja.open_existing(tmp_path / "generator")
     for i in range(30):
         assert i == memmap[i]

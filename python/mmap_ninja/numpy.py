@@ -4,6 +4,7 @@ from typing import Union, List, Tuple, Sequence, Optional, Dict
 
 # See: https://numpy.org/doc/stable/reference/generated/numpy.memmap.html
 import numpy as np
+from mmap_ninja.base import from_generator_base
 
 from mmap_ninja import base
 
@@ -136,23 +137,14 @@ def from_generator(out_dir: Union[str, Path], sample_generator, batch_size: int,
     :param verbose: Whether to show the progress bar.
     :return:
     """
-    out_dir = _create_if_not_exists(out_dir)
-    samples = []
-    memmap = None
-    start = 0
-    if verbose:
-        from tqdm import tqdm
-
-        sample_generator = tqdm(sample_generator, total=n)
-    for sample in sample_generator:
-        samples.append(sample)
-        if len(samples) % batch_size != 0:
-            continue
-        memmap, start = _write_samples(memmap, out_dir, samples, start, n)
-        samples = []
-    if len(samples) > 0:
-        memmap, start = _write_samples(memmap, out_dir, samples, start, n)
-    return memmap
+    return from_generator_base(
+        out_dir=out_dir,
+        sample_generator=sample_generator,
+        batch_size=batch_size,
+        batch_ctor=from_ndarray,
+        extend_fn=extend,
+        verbose=verbose,
+    )
 
 
 def open_existing(out_dir: Union[str, Path], mode="r") -> np.memmap:

@@ -185,14 +185,15 @@ def _sequence_of_strings_to_bytes(strings: Sequence[str], verbose=False) -> Byte
     return BytesSlices(bytes(buffer), starts, ends)
 
 
-def from_generator_base(sample_generator, out_dir, batch_size, batch_ctor, **kwargs):
+def from_generator_base(out_dir, sample_generator, batch_size, batch_ctor, extend_fn=None, **kwargs):
     """
     Creates an output from a generator, flushing every batch to disk.
 
-    :param sample_generator: The generator of samples.
     :param out_dir: The output directory.
+    :param sample_generator: The generator of samples.
     :param batch_size: The batch size, which controls how often the output should be written to disk.
     :param batch_ctor: The constructor used to initialize the output.
+    :param extend_fn: Functon to call when doing .extend. By default, this will call memmap.extend(samples)
     :param kwargs: Additional keyword arguments to be passed when initializing the output.
     :return:
     """
@@ -211,13 +212,19 @@ def from_generator_base(sample_generator, out_dir, batch_size, batch_ctor, **kwa
         if memmap is None:
             memmap = batch_ctor(out_dir, samples, **kwargs)
         else:
-            memmap.extend(samples)
+            if extend_fn is not None:
+                extend_fn(memmap, samples)
+            else:
+                memmap.extend(samples)
         samples = []
     if len(samples) > 0:
         if memmap is None:
             memmap = batch_ctor(out_dir, samples, **kwargs)
         else:
-            memmap.extend(samples)
+            if extend_fn is not None:
+                extend_fn(memmap, samples)
+            else:
+                memmap.extend(samples)
     return memmap
 
 
