@@ -1,4 +1,5 @@
 import struct
+from copy import copy
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Union, Sequence, List
@@ -234,7 +235,7 @@ class Wrapped:
         self.wrapper_fn = wrapper_fn
 
     def __getitem__(self, item):
-        return self.wrapper_fn(self.data[item])
+        return self.wrapper_fn(copy(self.data[item]))
 
     def __len__(self):
         return len(self.data)

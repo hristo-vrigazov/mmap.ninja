@@ -1,3 +1,4 @@
+from copy import copy
 from pathlib import Path
 from typing import Union, Sequence
 
@@ -91,7 +92,7 @@ class RaggedMmap:
             res = res.reshape(shape)
         if self.wrapper_fn is not None:
             res = self.wrapper_fn(res)
-        return res
+        return copy(res)
 
     def append(self, array: np.ndarray):
         self.extend([array])
