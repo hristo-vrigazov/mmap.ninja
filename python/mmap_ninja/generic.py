@@ -18,5 +18,8 @@ def open_existing(out_dir: Union[str, Path], wrapper_fn: Optional[Callable] = No
     if type_str == "ragged":
         return RaggedMmap(out_dir, wrapper_fn=wrapper_fn)
     if type_str == "string":
-        return StringsMmap(out_dir)
+        memmap = StringsMmap(out_dir)
+        if wrapper_fn is not None:
+            return Wrapped(memmap, wrapper_fn)
+        return memmap
     raise ValueError(f'Unknown type "{type_str}" while trying to open "{out_dir}" !')
