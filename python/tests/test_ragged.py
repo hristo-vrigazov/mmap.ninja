@@ -136,3 +136,10 @@ def test_parallel_read(tmp_path, np_array_with_different_number_of_axes):
     p = Parallel()
     r = p(delayed_funcs)
     assert len(r) == n_workers
+
+
+def test_empty_init(tmp_path):
+    ragged = RaggedMmap(tmp_path / "samples")
+    assert len(ragged) == 0
+    ragged.append(np.array([[1.0, 2.0, 3], [4.0, 5.0, 6.0]]))
+    assert len(ragged) == 1

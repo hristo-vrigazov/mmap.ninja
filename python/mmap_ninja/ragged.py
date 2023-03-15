@@ -40,10 +40,25 @@ class RaggedMmap:
         self.out_dir = out_dir
         self.wrapper_fn = wrapper_fn
         self.mode = mode
+
+        self.shapes_are_flat = None
+        self.shapes_ctor = None
+        self.memmap = None
+        self.starts = None
+        self.ends = None
+        self.shapes = None
+        self.flattened_shapes = None
+        self.range = None
+        self.n = None
+        self.range = None
+        self.shapes_extension_fn = None
+
+        if (self.out_dir / "shapes_are_flat.ninja").exists():
+            self._reload_fields()
+
+    def _reload_fields(self):
         self.shapes_are_flat = bool(base._file_to_int(self.out_dir / "shapes_are_flat.ninja"))
-
         self.shapes_ctor = numpy.open_existing if self.shapes_are_flat else RaggedMmap
-
         self.memmap = numpy.open_existing(self.out_dir, mode=self.mode)
         self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode=self.mode)
         self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode=self.mode)
@@ -79,6 +94,8 @@ class RaggedMmap:
         return self.set_multiple(key, value)
 
     def __len__(self):
+        if self.starts is None:
+            return 0
         return len(self.starts)
 
     def get_single(self, item):
@@ -98,6 +115,10 @@ class RaggedMmap:
         self.extend([array])
 
     def extend(self, arrays: Sequence[np.ndarray]):
+        if self.starts is None:
+            RaggedMmap.from_lists(self.out_dir, arrays)
+            self._reload_fields()
+            return
         numpy_bytes_slices = numpy._lists_of_ndarrays_to_bytes(arrays, self.memmap.dtype)
         numpy.extend(self.memmap, numpy_bytes_slices.buffer)
         end = self.ends[-1]
@@ -105,15 +126,7 @@ class RaggedMmap:
         numpy.extend(self.ends, end + numpy_bytes_slices.ends)
         numpy.extend(self.flattened_shapes, numpy_bytes_slices.flattened_shapes)
         self.shapes_extension_fn(self.shapes, numpy_bytes_slices.shapes)
-
-        self.memmap = numpy.open_existing(self.out_dir, mode=self.mode)
-        self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode=self.mode)
-        self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode=self.mode)
-        self.shapes = self.shapes_ctor(self.out_dir / self.shapes_key, mode=self.mode)
-        self.flattened_shapes = numpy.open_existing(self.out_dir / self.flattened_shapes_key, mode=self.mode)
-        self.range = np.arange(len(self.starts), dtype=np.int64)
-        self.n = len(self.shapes)
-        self.range = np.arange(self.n)
+        self._reload_fields()
 
     def __repr__(self):
         base_repr = super().__repr__()
