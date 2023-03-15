@@ -91,41 +91,6 @@ def from_ndarray(out_dir: Union[str, Path], arr: np.ndarray) -> np.memmap:
     return memmap
 
 
-def _write_samples(
-    memmap: Optional[np.memmap],
-    out_dir: Path,
-    samples: Sequence[np.ndarray],
-    start: int,
-    total: int,
-) -> Tuple[np.memmap, int]:
-    """
-    Writes samples starting from a given start index in the memory map.
-    Initializes the memory map if it is not yet initialized
-
-    :param memmap: The memory map or ``None`` if not initialized yet
-    :param out_dir: The directory in which the memory map is persisted
-    :param samples: The samples that need to be written
-    :param start: The start index at which the samples should be written
-    :param total: Total number of samples. Used when initializing the memory map.
-    :return: A tuple of the updated memory map, and the end offset at which the last sample was written.
-    """
-    arr = np.stack(samples)
-    if memmap is None:
-        dtype = arr.dtype
-        shape = (total,) + arr.shape[1:]
-        order = "F" if np.isfortran(arr) else "C"
-        memmap = np.memmap(
-            str(out_dir / "data.ninja"),
-            mode="w+",
-            dtype=dtype,
-            shape=shape,
-            order=order,
-        )
-    end = start + len(samples)
-    memmap[start:end] = arr
-    return memmap, end
-
-
 def from_generator(out_dir: Union[str, Path], sample_generator, batch_size: int, n: int, verbose=False) -> np.memmap:
     """
     Create a numpy memory-map from a sample generator.

@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from mmap_ninja import generic
@@ -76,3 +78,11 @@ def test_index_error(tmp_path):
     print(memmap)
     with pytest.raises(IndexError):
         memmap[0]
+
+
+def test_json_wrapper(tmp_path):
+    memmap = StringsMmap(tmp_path / "strings_memmap")
+    memmap.append(json.dumps({"asdasd": "as"}))
+
+    memmap = generic.open_existing(tmp_path / "strings_memmap", wrapper_fn=json.loads)
+    print(memmap[0])
