@@ -84,6 +84,8 @@ class RaggedMmap:
         self.memmap[start:end] = value
 
     def __getitem__(self, item):
+        if self.starts is None:
+            raise IndexError(f"RaggedMmap is empty!")
         if np.isscalar(item):
             return self.get_single(item)
         return self.get_multiple(item)

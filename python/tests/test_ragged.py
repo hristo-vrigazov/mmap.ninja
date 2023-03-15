@@ -143,3 +143,9 @@ def test_empty_init(tmp_path):
     assert len(ragged) == 0
     ragged.append(np.array([[1.0, 2.0, 3], [4.0, 5.0, 6.0]]))
     assert len(ragged) == 1
+
+
+def test_ragged_index_error(tmp_path):
+    ragged = RaggedMmap(tmp_path / "samples")
+    with pytest.raises(IndexError):
+        ragged[0]
