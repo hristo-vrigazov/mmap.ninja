@@ -69,3 +69,10 @@ def test_open_empty(tmp_path):
     assert len(memmap) == 0
     memmap.append("Something")
     assert len(memmap) == 1
+
+
+def test_index_error(tmp_path):
+    memmap = StringsMmap(tmp_path / "strings_memmap")
+    print(memmap)
+    with pytest.raises(IndexError):
+        memmap[0]
