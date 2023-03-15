@@ -25,11 +25,14 @@ class StringsMmap:
         self.starts_key = starts_key
         self.ends_key = ends_key
 
-        self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode="r")
-        self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode="r")
-        self.range = np.arange(len(self.starts), dtype=np.int64)
-        self.file = open(data_file, mode=mode)
-        self.buffer = mmap.mmap(self.file.fileno(), 0)
+        self.starts = None
+        self.ends = None
+        self.range = None
+        self.file = None
+        self.buffer = None
+
+        if (self.out_dir / self.starts_key / "dtype.ninja").exists():
+            self._reload_fields()
 
     def get_multiple(self, item):
         indices = self.range[item]
@@ -41,6 +44,8 @@ class StringsMmap:
         return _bytes_to_str(self.buffer[start:end])
 
     def __getitem__(self, item):
+        if self.starts is None:
+            raise IndexError(f"StringsMmap is empty!")
         if np.isscalar(item):
             return self.get_single(item)
         return self.get_multiple(item)
@@ -51,6 +56,8 @@ class StringsMmap:
         return self.set_multiple(key, value)
 
     def __len__(self):
+        if self.starts is None:
+            return 0
         return len(self.starts)
 
     def set_multiple(self, key, value):
@@ -68,6 +75,10 @@ class StringsMmap:
         self.file.close()
 
     def extend(self, list_of_strings: Sequence[str], verbose=False):
+        if self.starts is None:
+            StringsMmap.from_strings(self.out_dir, list_of_strings, verbose=verbose)
+            self._reload_fields()
+            return
         bytes_slices = _sequence_of_strings_to_bytes(list_of_strings, verbose=verbose)
         end = self.ends[-1]
         start_offsets = end + bytes_slices.starts
@@ -79,7 +90,9 @@ class StringsMmap:
         with open(out_dir / "data.ninja", "ab") as data_file:
             data_file.write(bytes_slices.buffer)
             data_file.flush()
+        self._reload_fields()
 
+    def _reload_fields(self):
         self.starts = numpy.open_existing(self.out_dir / self.starts_key, mode="r")
         self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode="r")
         self.range = np.arange(len(self.starts), dtype=np.int64)

@@ -62,3 +62,10 @@ def test_from_generator(tmp_path, n):
     for i in range(n):
         assert str(i) == memmap[i]
     generic.open_existing(tmp_path / "strings_memmap")
+
+
+def test_open_empty(tmp_path):
+    memmap = StringsMmap(tmp_path / "strings_memmap")
+    assert len(memmap) == 0
+    memmap.append("Something")
+    assert len(memmap) == 1
