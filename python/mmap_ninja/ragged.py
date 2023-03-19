@@ -19,8 +19,8 @@ class RaggedMmap:
     def __init__(
         self,
         out_dir: Union[str, Path],
-        mode="r",
         wrapper_fn=None,
+        mode="r",
         starts_key="starts",
         ends_key="ends",
         shapes_key="shapes",
@@ -110,8 +110,8 @@ class RaggedMmap:
         else:
             res = res.reshape(shape)
         if self.wrapper_fn is not None:
-            res = self.wrapper_fn(res)
-        return copy(res)
+            res = self.wrapper_fn(copy(res))
+        return res
 
     def append(self, array: np.ndarray):
         self.extend([array])
