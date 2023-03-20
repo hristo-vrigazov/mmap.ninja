@@ -9,7 +9,7 @@ Install with:
 pip install mmap_ninja
 ```
 
-![Gitter](https://img.shields.io/gitter/room/hristo-vrigazov/mmap-ninja)
+[![Gitter](https://img.shields.io/gitter/room/hristo-vrigazov/mmap-ninja)](https://app.gitter.im/#/room/#mmap-ninja:gitter.im)
 [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing)
 [![Build Status](https://app.travis-ci.com/hristo-vrigazov/mmap.ninja.svg?branch=master)](https://app.travis-ci.com/hristo-vrigazov/mmap.ninja)
 [![codecov](https://codecov.io/gh/hristo-vrigazov/mmap.ninja/branch/master/graph/badge.svg?token=YUCO0KJONB)](https://codecov.io/gh/hristo-vrigazov/mmap.ninja)
