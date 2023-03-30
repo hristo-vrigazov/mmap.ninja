@@ -97,7 +97,8 @@ class StringsMmap:
         self.ends = numpy.open_existing(self.out_dir / self.ends_key, mode="r")
         self.range = np.arange(len(self.starts), dtype=np.int64)
         self.file = open(self.data_file, mode=self.mode)
-        self.buffer = mmap.mmap(self.file.fileno(), 0)
+        access = mmap.ACCESS_READ if self.mode == 'rb' else mmap.ACCESS_DEFAULT
+        self.buffer = mmap.mmap(self.file.fileno(), 0, access=access)
 
     def append(self, string: str):
         self.extend([string])
