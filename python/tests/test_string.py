@@ -1,4 +1,6 @@
 import json
+import os
+import stat
 
 import pytest
 
@@ -86,3 +88,18 @@ def test_json_wrapper(tmp_path):
 
     memmap = generic.open_existing(tmp_path / "strings_memmap", wrapper_fn=json.loads)
     print(memmap[0])
+
+
+def test_read_only(tmp_path):
+    out_path = tmp_path / 'read_only_str_memmap'
+    list_of_strings = ['This is the first test string...', '... and the second one.']
+    StringsMmap.from_strings(out_dir=out_path, strings=list_of_strings)
+    # Make all memmap files read-only for the user
+    for p in out_path.glob(r'**/*'):
+        if not p.is_file():
+            continue
+        os.chmod(p, stat.S_IRUSR)
+    # Open in read-only mode
+    memmap = StringsMmap(out_dir=out_path, mode='rb')
+    for i, string in enumerate(list_of_strings):
+        assert string == memmap[i]
