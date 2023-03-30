@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Union, Callable, Optional
 
 
-def open_existing(out_dir: Union[str, Path], wrapper_fn: Optional[Callable] = None):
+def open_existing(out_dir: Union[str, Path], wrapper_fn: Optional[Callable] = None, mode="r+b"):
     out_dir = Path(out_dir)
     type_str = base._file_to_str(out_dir / "type.ninja")
     if type_str == "numpy":
@@ -18,7 +18,7 @@ def open_existing(out_dir: Union[str, Path], wrapper_fn: Optional[Callable] = No
     if type_str == "ragged":
         return RaggedMmap(out_dir, wrapper_fn=wrapper_fn)
     if type_str == "string":
-        memmap = StringsMmap(out_dir)
+        memmap = StringsMmap(out_dir, mode=mode)
         if wrapper_fn is not None:
             return Wrapped(memmap, wrapper_fn)
         return memmap
