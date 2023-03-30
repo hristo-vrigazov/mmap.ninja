@@ -1,3 +1,6 @@
+import os
+import stat
+
 import numpy as np
 
 from mmap_ninja import numpy as np_ninja, generic
@@ -67,3 +70,18 @@ def test_numpy_from_generator(tmp_path):
     memmap = np_ninja.open_existing(tmp_path / "generator")
     for i in range(30):
         assert i == memmap[i]
+
+
+def test_read_only(tmp_path):
+    out_path = tmp_path / 'read_only_numpy_memmap'
+    arr = np.arange(10)
+    np_ninja.from_ndarray(out_path, arr)
+    # Make all memmap files read-only for the user
+    for p in out_path.glob(r'**/*'):
+        if not p.is_file():
+            continue
+        os.chmod(p, stat.S_IRUSR)
+    # Open in read-only mode
+    memmap = np_ninja.open_existing(out_path, mode='r')
+    for i, el in enumerate(arr):
+        assert el == memmap[i]
