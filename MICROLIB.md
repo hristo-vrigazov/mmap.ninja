@@ -82,7 +82,6 @@ np_ninja.from_generator(
     out_dir='imgs_mmap',
     sample_generator=map(mpimg.imread, imgs_dir.iterdir()),
     batch_size=32,
-    n=len(listdir(imgs_dir))
 )
 ```
 
