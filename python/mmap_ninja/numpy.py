@@ -91,14 +91,13 @@ def from_ndarray(out_dir: Union[str, Path], arr: np.ndarray) -> np.memmap:
     return memmap
 
 
-def from_generator(out_dir: Union[str, Path], sample_generator, batch_size: int, n: int, verbose=False) -> np.memmap:
+def from_generator(out_dir: Union[str, Path], sample_generator, batch_size: int, verbose=False) -> np.memmap:
     """
     Create a numpy memory-map from a sample generator.
 
     :param sample_generator: A generator of the samples
     :param out_dir: The output directory
     :param batch_size: How often to flush to disk
-    :param n: Total number of samples.
     :param verbose: Whether to show the progress bar.
     :return:
     """
