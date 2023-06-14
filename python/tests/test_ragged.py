@@ -155,14 +155,21 @@ def test_ragged_index_error(tmp_path):
 
 
 def test_read_only(tmp_path, np_array_with_different_number_of_axes):
-    out_path = tmp_path / 'read_only_ragged_memmap'
+    out_path = tmp_path / "read_only_ragged_memmap"
     RaggedMmap.from_generator(out_path, np_array_with_different_number_of_axes, batch_size=100)
     # Make all memmap files read-only for the user
-    for p in out_path.glob(r'**/*'):
+    for p in out_path.glob(r"**/*"):
         if not p.is_file():
             continue
         os.chmod(p, stat.S_IRUSR)
     # Open in read-only mode
-    ragged = RaggedMmap(out_path, mode='r')
+    ragged = RaggedMmap(out_path, mode="r")
     for i, arr in enumerate(np_array_with_different_number_of_axes):
         assert np.allclose(arr, ragged[i])
+
+
+def test_empty_element(tmp_path):
+    arrays = [[1, 2, 3], [4, 5], [], [6, 7]]
+    res = RaggedMmap.from_lists(tmp_path / "int", arrays)
+    for i in range(len(arrays)):
+        _ = res[i]
