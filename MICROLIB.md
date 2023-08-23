@@ -46,6 +46,22 @@ wrapped = Wrapped(dataset, wrapper_fn=torch.tensor)
 print(wrapped[14])
 ```
 
+Before the `wrapper_fn` is called, a copy of the sample is made to avoid warnings 
+about non-writeable underlying tensor. If you are going to only read from the sample,
+you can pass `copy_before_wrapper_fn=False` when initializing the object. 
+For example:
+
+```python
+import numpy as np
+import torch
+from mmap_ninja.base import Wrapped
+
+dataset = [np.array([1, 2, 3], np.array([-1, 10]))]
+wrapped = Wrapped(dataset, wrapper_fn=torch.tensor, copy_before_wrapper_fn=False)
+
+print(wrapped[14])
+```
+
 ### Create a Numpy memmap from a Numpy array
 
 The `mmap_ninja.numpy` module provides utilities for
@@ -176,6 +192,19 @@ import torch
 from mmap_ninja.ragged import RaggedMmap
 
 images = RaggedMmap('val_images', wrapper_fn=torch.tensor)
+assert isinstance(torch.Tensor, images[4])
+```
+
+Before the `wrapper_fn` is called, a copy of the sample is made to avoid warnings 
+about non-writeable underlying tensor. If you are going to only read from the sample,
+you can pass `copy_before_wrapper_fn=False` when initializing the object. 
+
+```python
+import numpy as np
+import torch
+from mmap_ninja.ragged import RaggedMmap
+
+images = RaggedMmap('val_images', wrapper_fn=torch.tensor, copy_before_wrapper_fn=False)
 assert isinstance(torch.Tensor, images[4])
 ```
 

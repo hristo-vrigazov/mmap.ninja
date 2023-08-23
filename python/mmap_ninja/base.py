@@ -239,8 +239,6 @@ class Wrapped:
         sample = self.data[item]
         if self.copy_before_wrapper_fn:
             sample = copy(sample)
-        else:
-            print("Yo")
         return self.wrapper_fn(sample)
 
     def __len__(self):
