@@ -50,3 +50,12 @@ def test_wrapper():
     assert wrapped[1] == -2
     assert wrapped[2] == -3
     assert len(wrapped) == 3
+
+
+def test_wrapper_skip_copy():
+    arr = np.array([1, 2, 3])
+    wrapped = base.Wrapped(arr, lambda x: -x, copy_before_wrapper_fn=False)
+    assert wrapped[0] == -1
+    assert wrapped[1] == -2
+    assert wrapped[2] == -3
+    assert len(wrapped) == 3

@@ -25,6 +25,7 @@ class RaggedMmap:
         ends_key="ends",
         shapes_key="shapes",
         flattened_shapes_key="flattened_shapes",
+        copy_before_wrapper_fn=True,
     ):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
@@ -55,6 +56,8 @@ class RaggedMmap:
 
         if (self.out_dir / "shapes_are_flat.ninja").exists():
             self._reload_fields()
+
+        self.copy_before_wrapper_fn = copy_before_wrapper_fn
 
     def _reload_fields(self):
         self.shapes_are_flat = bool(base._file_to_int(self.out_dir / "shapes_are_flat.ninja"))
@@ -111,7 +114,9 @@ class RaggedMmap:
         else:
             res = res.reshape(shape)
         if self.wrapper_fn is not None:
-            res = self.wrapper_fn(copy(res))
+            if self.copy_before_wrapper_fn:
+                res = copy(res)
+            res = self.wrapper_fn(res)
         return res
 
     def append(self, array: np.ndarray):

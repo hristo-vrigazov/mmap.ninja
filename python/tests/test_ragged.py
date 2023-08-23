@@ -173,3 +173,10 @@ def test_empty_element(tmp_path):
     res = RaggedMmap.from_lists(tmp_path / "int", arrays)
     for i in range(len(arrays)):
         _ = res[i]
+
+
+def test_wrapper_fn_without_copy(tmp_path, np_array_with_different_number_of_axes):
+    mmap = RaggedMmap.from_generator(tmp_path / "base", np_array_with_different_number_of_axes, batch_size=1)
+    mmap = RaggedMmap(tmp_path / "base", wrapper_fn=lambda x: x, copy_before_wrapper_fn=False)
+    for i in range(2):
+        sample = mmap[i]

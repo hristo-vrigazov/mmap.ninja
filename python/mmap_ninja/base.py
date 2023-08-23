@@ -230,12 +230,18 @@ def from_generator_base(out_dir, sample_generator, batch_size, batch_ctor, exten
 
 
 class Wrapped:
-    def __init__(self, data, wrapper_fn):
+    def __init__(self, data, wrapper_fn, copy_before_wrapper_fn=True):
         self.data = data
         self.wrapper_fn = wrapper_fn
+        self.copy_before_wrapper_fn = copy_before_wrapper_fn
 
     def __getitem__(self, item):
-        return self.wrapper_fn(copy(self.data[item]))
+        sample = self.data[item]
+        if self.copy_before_wrapper_fn:
+            sample = copy(sample)
+        else:
+            print("Yo")
+        return self.wrapper_fn(sample)
 
     def __len__(self):
         return len(self.data)
