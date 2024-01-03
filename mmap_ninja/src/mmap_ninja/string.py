@@ -4,8 +4,7 @@ from typing import Sequence, Union
 
 import numpy as np
 
-from mmap_ninja import base
-from src.mmap_ninja import numpy
+from mmap_ninja import base, numpy
 from mmap_ninja.base import _bytes_to_str, _str_to_bytes, _sequence_of_strings_to_bytes
 
 

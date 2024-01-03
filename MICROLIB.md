@@ -71,7 +71,7 @@ this example:
 
 ```python
 import numpy as np
-from src.mmap_ninja import numpy as np_ninja
+from mmap_ninja import numpy as np_ninja
 
 arr = np.random.randn(200, 224, 224, 3)
 np_ninja.from_ndarray('imgs_mmap', arr)

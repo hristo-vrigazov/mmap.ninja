@@ -3,8 +3,7 @@ import stat
 
 import numpy as np
 
-from mmap_ninja import generic
-from src.mmap_ninja import numpy as np_ninja
+from mmap_ninja import generic, numpy as np_ninja
 
 
 def test_numpy(tmp_path):

@@ -1,5 +1,4 @@
-from mmap_ninja import base
-from src.mmap_ninja import numpy as np_ninja
+from mmap_ninja import base, numpy as np_ninja
 from mmap_ninja.base import Wrapped
 from mmap_ninja.string import StringsMmap
 from mmap_ninja.ragged import RaggedMmap
