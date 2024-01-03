@@ -4,7 +4,8 @@ from typing import Union, Sequence
 
 import numpy as np
 
-from mmap_ninja import numpy, base
+from mmap_ninja import base
+from src.mmap_ninja import numpy
 
 
 def _np_shape_extend(shapes, arr):
