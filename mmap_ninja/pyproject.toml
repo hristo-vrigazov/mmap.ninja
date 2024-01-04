@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mmap_ninja"
-version = "0.7.1"
+version = "0.7.2"
 description = "mmap.ninja: Memory mapped data structures"
 readme = "README.md"
 authors = [{ name = "Hristo Vrigazov", email = "hvrigazov@gmail.com" }]
