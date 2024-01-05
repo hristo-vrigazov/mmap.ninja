@@ -233,7 +233,7 @@ Coming soon
 
 ## API guide
 
-[Read the docs](https://mmapninja.readthedocs.io/en/latest/)
+[Read the docs](https://microlib.org/mmap_ninja.html)
 
 [Back to Contents](#contents)
 
