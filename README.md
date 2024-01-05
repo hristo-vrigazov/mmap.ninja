@@ -105,11 +105,11 @@ In the table below, you can see concrete examples, but beware that those are jus
 
 It just stores `np.ndarray` and it is up to you to decide what this array represents.
 
-| Use case   | Notebook                                                                                                                                                             | Benchmark                                                 | Class/Module                                 |
-|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------|:---------------------------------------------|
-| Image      | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [COCO 2017](#memory-mapping-images-with-different-shapes) | `from mmap_ninja.ragged import RaggedMmap`   |
-| Text       | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18bEwylFwx4owMpb-RAkJZS_9JrrUcFd7?usp=sharing) | [20 newsgroups](#memory-mapping-text-documents)           | `from mmap_ninja.string import StringsMmap`  |
-| Video      | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xMEHbwntgpBfCGfTicXmdbA8UpEowXzW?usp=sharing) | Coming soon!                                              | `from mmap_ninja import numpy as RaggedMmap` |
+| Use case   | Notebook                                                                                                                                                             | Benchmark                                                 | Class/Module                         |
+|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------|:-------------------------------------|
+| Image      | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing) | [COCO 2017](#memory-mapping-images-with-different-shapes) | `from mmap_ninja import RaggedMmap`  |
+| Text       | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/18bEwylFwx4owMpb-RAkJZS_9JrrUcFd7?usp=sharing) | [20 newsgroups](#memory-mapping-text-documents)           | `from mmap_ninja import StringsMmap` |
+| Video      | [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xMEHbwntgpBfCGfTicXmdbA8UpEowXzW?usp=sharing) | Coming soon!                                              | `from mmap_ninja import RaggedMmap`  |
 
 
 [Back to Contents](#contents)
