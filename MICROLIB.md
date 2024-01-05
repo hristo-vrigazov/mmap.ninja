@@ -92,11 +92,7 @@ during the conversion using `tqdm`, since the conversion usually takes a long ti
 
 ```python
 import matplotlib.image as mpimg
-import numpy as np
-from mmap_ninja import numpy as np_ninja
 from pathlib import Path
-from os import listdir
-
 import mmap_ninja
 
 imgs_dir = Path('./path_to_img_dir')
@@ -114,9 +110,9 @@ Once you have created a `np.memmap`, you can open it
 in later stages of the project using `np_ninja.open_existing`
 
 ```python
-from mmap_ninja import numpy as np_ninja
+import mmap_ninja
 
-memmap = np_ninja.open_existing("growable")
+memmap = mmap_ninja.np_open_existing("growable")
 ```
 
 Once you have opened it, you can do all the usual numpy operations
@@ -132,12 +128,12 @@ uses the directory, in which the `np.memmap` is persisted.
 ```python
 import numpy as np
 
-from mmap_ninja import numpy as np_ninja
+import mmap_ninja
 
 arr = np.arange(3)
-memmap = np_ninja.from_ndarray("growable", arr)
-np_ninja.extend(memmap, np.arange(11, 13))
-np_ninja.extend_dir("growable", np.arange(14, 16))
+memmap = mmap_ninja.np_from_ndarray("growable", arr)
+mmap_ninja.np_extend(memmap, np.arange(11, 13))
+mmap_ninja.np_extend_dir("growable", np.arange(14, 16))
 ```
 
 ## Ragged API
@@ -150,7 +146,7 @@ If your samples are of different shapes, then you should use
 
 ```python
 import numpy as np
-from mmap_ninja.ragged import RaggedMmap
+from mmap_ninja import RaggedMmap
 
 simple = [np.array([11, 13, -1, 17]), np.array([2, 3, 4, 19]), np.array([90, 12])]
 RaggedMmap.from_lists("simple", simple)
@@ -165,7 +161,7 @@ during the conversion using `tqdm`, since the conversion usually takes a long ti
 
 ```python
 import matplotlib.pyplot as plt
-from mmap_ninja.ragged import RaggedMmap
+from mmap_ninja import RaggedMmap
 from pathlib import Path
 
 img_path = Path('<PATH TO IMAGE DATASET>')
@@ -184,7 +180,7 @@ constructor:
 
 ```python
 import numpy as np
-from mmap_ninja.ragged import RaggedMmap
+from mmap_ninja import RaggedMmap
 
 images = RaggedMmap('val_images')
 assert isinstance(np.ndarray, images[4])
@@ -198,7 +194,7 @@ to every sample after `__getitem__`.
 ```python
 import numpy as np
 import torch
-from mmap_ninja.ragged import RaggedMmap
+from mmap_ninja import RaggedMmap
 
 images = RaggedMmap('val_images', wrapper_fn=torch.tensor)
 assert isinstance(torch.Tensor, images[4])
@@ -211,7 +207,7 @@ you can pass `copy_before_wrapper_fn=False` when initializing the object.
 ```python
 import numpy as np
 import torch
-from mmap_ninja.ragged import RaggedMmap
+from mmap_ninja import RaggedMmap
 
 images = RaggedMmap('val_images', wrapper_fn=torch.tensor, copy_before_wrapper_fn=False)
 assert isinstance(torch.Tensor, images[4])
@@ -225,7 +221,7 @@ To append multiple samples, use `RaggedMmap.extend`.
 
 ```python
 import numpy as np
-from mmap_ninja.ragged import RaggedMmap
+from mmap_ninja import RaggedMmap
 
 mmap = RaggedMmap('samples')
 new_samples = [np.array([123, -1]), np.array([-1, 0, 123, 92, 12])]
@@ -240,7 +236,7 @@ To create a `StringsMmap` from a list of strings, use the
 `StringsMmap.from_strings` method:
 
 ```python
-from mmap_ninja.string import StringsMmap
+from mmap_ninja import StringsMmap
 
 list_of_strings = ["foo", "bar", "bidon", "zele", "slanina"]
 
@@ -255,8 +251,7 @@ flushing every `batch_size` samples to disk, and optionally, a progress bar can 
 (`verbose=True`) during the conversion using `tqdm`, since the conversion usually takes a long time.
  
 ```python
-from pathlib import Path
-from mmap_ninja.string import StringsMmap
+from mmap_ninja import StringsMmap
 
 def generate_strs(n):
     for i in range(n):
@@ -277,7 +272,7 @@ Once the `StringsMmap` has been created, just open it using its
 constructor:
 
 ```python
-from mmap_ninja.string import StringsMmap
+from mmap_ninja import StringsMmap
 
 memmap = StringsMmap('strings_mmap')
 ```
@@ -292,7 +287,7 @@ To append a single string, use `StringsMmap.append`.
 To append multiple samples, use `StringsMmap.extend`.
 
 ```python
-from mmap_ninja.string import StringsMmap
+from mmap_ninja import StringsMmap
 
 mmap = StringsMmap('strings_mmap')
 new_samples = ['foo', 'bar']
