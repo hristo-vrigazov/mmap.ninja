@@ -2,7 +2,6 @@ import os
 import stat
 
 import numpy as np
-
 from mmap_ninja import generic, numpy as np_ninja
 
 

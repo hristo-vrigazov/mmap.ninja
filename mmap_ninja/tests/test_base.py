@@ -1,6 +1,6 @@
 import numpy as np
 
-from mmap_ninja import base
+from mmap_ninja import base, Wrapped
 
 
 def test_int_conversions():
@@ -45,7 +45,7 @@ def test_shape_file(tmp_path):
 
 def test_wrapper():
     arr = np.array([1, 2, 3])
-    wrapped = base.Wrapped(arr, lambda x: -x)
+    wrapped = Wrapped(arr, lambda x: -x)
     assert wrapped[0] == -1
     assert wrapped[1] == -2
     assert wrapped[2] == -3
@@ -54,7 +54,7 @@ def test_wrapper():
 
 def test_wrapper_skip_copy():
     arr = np.array([1, 2, 3])
-    wrapped = base.Wrapped(arr, lambda x: -x, copy_before_wrapper_fn=False)
+    wrapped = Wrapped(arr, lambda x: -x, copy_before_wrapper_fn=False)
     assert wrapped[0] == -1
     assert wrapped[1] == -2
     assert wrapped[2] == -3

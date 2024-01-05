@@ -29,6 +29,9 @@ String API:
 3. [Open an existing StringsMmap](#open-an-existing-stringsmmap)
 4. [Append new samples to a StringsMmap](#append-new-samples-to-a-stringsmmap)
 
+
+## Utils API
+
 ### Wrapped
 
 The `Wrapped` class allows you to lazily apply a function
@@ -38,7 +41,7 @@ For example:
 ```python
 import numpy as np
 import torch
-from mmap_ninja.base import Wrapped
+from mmap_ninja import Wrapped
 
 dataset = [np.array([1, 2, 3], np.array([-1, 10]))]
 wrapped = Wrapped(dataset, wrapper_fn=torch.tensor)
@@ -54,13 +57,15 @@ For example:
 ```python
 import numpy as np
 import torch
-from mmap_ninja.base import Wrapped
+from mmap_ninja import Wrapped
 
 dataset = [np.array([1, 2, 3], np.array([-1, 10]))]
 wrapped = Wrapped(dataset, wrapper_fn=torch.tensor, copy_before_wrapper_fn=False)
 
 print(wrapped[14])
 ```
+
+## Numpy API
 
 ### Create a Numpy memmap from a Numpy array
 
@@ -71,10 +76,10 @@ this example:
 
 ```python
 import numpy as np
-from mmap_ninja import numpy as np_ninja
+import mmap_ninja
 
 arr = np.random.randn(200, 224, 224, 3)
-np_ninja.from_ndarray('imgs_mmap', arr)
+mmap_ninja.np_from_ndarray('imgs_mmap', arr)
 ```
 
 ### Create a Numpy memmap from a generator
@@ -92,9 +97,11 @@ from mmap_ninja import numpy as np_ninja
 from pathlib import Path
 from os import listdir
 
+import mmap_ninja
+
 imgs_dir = Path('./path_to_img_dir')
 
-np_ninja.from_generator(
+mmap_ninja.np_from_generator(
     out_dir='imgs_mmap',
     sample_generator=map(mpimg.imread, imgs_dir.iterdir()),
     batch_size=32,
@@ -132,6 +139,8 @@ memmap = np_ninja.from_ndarray("growable", arr)
 np_ninja.extend(memmap, np.arange(11, 13))
 np_ninja.extend_dir("growable", np.arange(14, 16))
 ```
+
+## Ragged API
 
 ### Create a RaggedMmap from list of samples
 
@@ -222,6 +231,8 @@ mmap = RaggedMmap('samples')
 new_samples = [np.array([123, -1]), np.array([-1, 0, 123, 92, 12])]
 mmap.extend(new_samples)
 ```
+
+## String API
 
 ### Create a StringsMmap from list of strings
 
