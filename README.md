@@ -37,7 +37,7 @@ import numpy as np
 import matplotlib.image as mpimg
 from tqdm import tqdm
 from pathlib import Path
-from mmap_ninja.ragged import RaggedMmap
+from mmap_ninja import RaggedMmap
 
 coco_path = Path('<PATH TO IMAGE DATASET>')
 
@@ -123,7 +123,7 @@ Create a memory map from generator, flushing to disk every 1024 images (so that 
 
 ```python
 import matplotlib.pyplot as plt
-from mmap_ninja.ragged import RaggedMmap
+from mmap_ninja import RaggedMmap
 from pathlib import Path
 
 coco_path = Path('<PATH TO IMAGE DATASET>')
@@ -137,7 +137,7 @@ val_images = RaggedMmap.from_generator(
 
 Once created, you can open the map by simply supplying the path to the memory map:
 ```python
-from mmap_ninja.ragged import RaggedMmap
+from mmap_ninja import RaggedMmap
 
 val_images = RaggedMmap('val_images')
 print(val_images[3]) # Prints the ndarray image, e.g. with shape (387, 640, 3)
@@ -171,7 +171,7 @@ Once it's created, you can open it by just supplying the path to the memory map.
 An example of creating a memory map for the [sklearn's 20newsgroups dataset](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_20newsgroups.html):
 
 ```python
-from mmap_ninja.string import StringsMmap
+from mmap_ninja import StringsMmap
 from sklearn.datasets import fetch_20newsgroups
 
 data = fetch_20newsgroups()
@@ -181,7 +181,7 @@ memmap = StringsMmap.from_strings('20newsgroups', data['data'], verbose=True)
 Opening an already existing `StringsMmmap`:
 
 ```python
-from mmap_ninja.string import StringsMmap
+from mmap_ninja import StringsMmap
 
 texts = StringsMmap('20newsgroups')
 print(texts[123])  # Prints the 123-th text
