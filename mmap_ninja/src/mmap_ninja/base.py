@@ -203,7 +203,7 @@ def from_generator_base(out_dir, sample_generator, batch_size, batch_ctor, exten
     samples = []
     memmap = None
     if kwargs.pop("verbose", False):
-        from tqdm import tqdm
+        from tqdm.auto import tqdm
 
         sample_generator = tqdm(sample_generator)
     for sample in sample_generator:
