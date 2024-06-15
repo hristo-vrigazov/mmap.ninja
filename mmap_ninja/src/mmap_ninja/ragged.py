@@ -190,3 +190,14 @@ class RaggedMmap:
             batch_ctor=cls.from_lists,
             **kwargs,
         )
+
+    @classmethod
+    def from_indexable(cls, out_dir: Union[str, Path], indexable, batch_size: int, verbose=False, **kwargs):
+        return base.from_indexable_base(
+            out_dir=out_dir,
+            indexable=indexable,
+            batch_size=batch_size,
+            verbose=verbose,
+            batch_ctor=cls.from_lists,
+            **kwargs,
+        )
