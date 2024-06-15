@@ -84,7 +84,7 @@ class ParallelBatchCollector:
         results = [_get_from_indexable(self.indexable, j) for j in self._rng()]
 
         if self.exhausted(results):
-            results = [r for r in results if r != EXHAUSTED]
+            results = [r for r in results if not isinstance(r, str) or r != EXHAUSTED]
 
         return results
 
@@ -94,13 +94,18 @@ class ParallelBatchCollector:
         results = self._parallel(func(j) for j in self._rng())
 
         if self.exhausted(results):
-            results = [r for r in results if r != EXHAUSTED]
+            results = [r for r in results if not isinstance(r, str) or r != EXHAUSTED]
             self._parallel.__exit__(None, None, None)
 
         return results
 
     def exhausted(self, results=()):
-        self._exhausted = self._exhausted or any(r == EXHAUSTED for r in results) or self.completed_batches()
+        self._exhausted = (
+                self._exhausted or
+                any(isinstance(r, str) and r == EXHAUSTED for r in results) or
+                self.completed_batches()
+        )
+
         return self._exhausted
 
     def completed_batches(self):
