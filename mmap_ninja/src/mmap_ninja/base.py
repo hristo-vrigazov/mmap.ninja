@@ -249,8 +249,6 @@ def from_indexable_base(out_dir, indexable, batch_size, batch_ctor, extend_fn=No
     out_dir = Path(out_dir)
     out_dir.mkdir(exist_ok=True)
     memmap = None
-    if kwargs.pop("verbose", False):
-        from tqdm.auto import tqdm
 
     batch_collector = ParallelBatchCollector(indexable, batch_size, n_jobs, verbose)
 
