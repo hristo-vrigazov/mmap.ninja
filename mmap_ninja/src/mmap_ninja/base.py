@@ -233,13 +233,14 @@ def from_generator_base(out_dir, sample_generator, batch_size, batch_ctor, exten
 
 def from_indexable_base(out_dir, indexable, batch_size, batch_ctor, extend_fn=None, n_jobs=None, verbose=False, **kwargs):
     """
-    Creates an output from a generator, flushing every batch to disk.
+    Creates an output from an indexable object, flushing every batch to disk. Can be done in parallel.
+    indexable[i] (or indexable(i)) will become memmap[i].
 
     :param out_dir: The output directory.
-    :param indexable: An object that supports __getitem__. indexable[i] will become memmap[i]
+    :param indexable: An object that supports __getitem__ or a function that takes one integer argument.
     :param batch_size: The batch size, which controls how often the output should be written to disk.
     :param batch_ctor: The constructor used to initialize the output.
-    :param extend_fn: Functon to call when doing .extend. By default, this will call memmap.extend(samples)
+    :param extend_fn: Functon to call when doing .extend. By default, this will call memmap.extend(samples).
     :param n_jobs: number of jobs to iterate through indexable with. Default=None corresponds to no parallelization.
     :param verbose: whether to print progress meter.
     :param kwargs: Additional keyword arguments to be passed when initializing the output.
