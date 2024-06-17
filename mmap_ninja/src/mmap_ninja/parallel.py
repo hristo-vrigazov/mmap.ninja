@@ -1,3 +1,4 @@
+from enum import Enum
 from functools import partial
 from tqdm.auto import tqdm
 
@@ -10,7 +11,11 @@ else:
     HAS_JOBLIB = True
 
 
-EXHAUSTED = '__EXHAUSTED__'
+class _Exhausted(Enum):
+    exhausted = 'EXHAUSTED'
+
+
+EXHAUSTED = _Exhausted.exhausted
 
 
 class ParallelBatchCollector:
@@ -84,7 +89,7 @@ class ParallelBatchCollector:
         results = [_get_from_indexable(self.indexable, j) for j in self._rng()]
 
         if self.exhausted(results):
-            results = [r for r in results if not isinstance(r, str) or r != EXHAUSTED]
+            results = [r for r in results if r is not EXHAUSTED]
 
         return results
 
@@ -94,7 +99,7 @@ class ParallelBatchCollector:
         results = self._parallel(func(j) for j in self._rng())
 
         if self.exhausted(results):
-            results = [r for r in results if not isinstance(r, str) or r != EXHAUSTED]
+            results = [r for r in results if r is not EXHAUSTED]
             self._parallel.__exit__(None, None, None)
 
         return results
@@ -102,7 +107,7 @@ class ParallelBatchCollector:
     def exhausted(self, results=()):
         self._exhausted = (
                 self._exhausted or
-                any(isinstance(r, str) and r == EXHAUSTED for r in results) or
+                any(r is EXHAUSTED for r in results) or
                 self.completed_batches()
         )
 
