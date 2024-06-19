@@ -96,6 +96,57 @@ def test_from_generator(tmp_path, n):
         assert np.allclose(np.ones(12) * i, memmap[i])
 
 
+@pytest.fixture
+def indexable_obj(request):
+    length, has_length = request.param
+
+    class _Indexable:
+        def __init__(self, _length, _has_length):
+            self.length = _length
+            self.has_length = _has_length
+
+        def __len__(self):
+            if not self.has_length:
+                raise TypeError
+            return self.length
+
+        def __getitem__(self, item):
+            if 0 <= item < self.length:
+                return np.ones(12) * item
+            raise IndexError(item)
+
+    return _Indexable(length, has_length)
+
+
+@pytest.mark.parametrize("n, indexable_obj", [(30, (30, True)), (3, (3, False))], indirect=["indexable_obj"])
+@pytest.mark.parametrize("n_jobs", [1, 2])
+def test_from_indexable_obj(tmp_path, n, indexable_obj, n_jobs):
+    memmap = RaggedMmap.from_indexable(tmp_path / "strings_memmap", indexable_obj, 4, n_jobs=n_jobs, verbose=True)
+    for i in range(n):
+        assert np.allclose(np.ones(12) * i, memmap[i])
+
+
+@pytest.fixture
+def indexable_func(request):
+
+    total = request.param
+
+    def func(item):
+        if 0 <= item < total:
+            return np.ones(12) * item
+        raise IndexError(item)
+
+    return func
+
+
+@pytest.mark.parametrize("n, indexable_func", [(30, 30), (3, 3)], indirect=["indexable_func"])
+@pytest.mark.parametrize("n_jobs", [1, 2])
+def test_from_indexable_func(tmp_path, n, indexable_func, n_jobs):
+    memmap = RaggedMmap.from_indexable(tmp_path / "strings_memmap", indexable_func, 4, n_jobs=n_jobs, verbose=True)
+    for i in range(n):
+        assert np.allclose(np.ones(12) * i, memmap[i])
+
+
 def test_nd_case(tmp_path):
     simple = [
         np.array([[11, 13], [-1, 17]]),
