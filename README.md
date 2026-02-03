@@ -9,6 +9,12 @@ Install with:
 pip install mmap_ninja
 ```
 
+Run tests using `uvx`:
+
+```bash
+uvx --with-editable mmap_ninja --with joblib pytest
+```
+
 [![Gitter](https://img.shields.io/gitter/room/hristo-vrigazov/mmap-ninja)](https://app.gitter.im/#/room/#mmap-ninja:gitter.im)
 [![Open In Collab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1-WMtVyfxx2aUMeV7vlG48Ia27-5cxnrS?usp=sharing)
 [![Build Status](https://app.travis-ci.com/hristo-vrigazov/mmap.ninja.svg?branch=master)](https://app.travis-ci.com/hristo-vrigazov/mmap.ninja)

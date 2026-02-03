@@ -119,6 +119,8 @@ class StringsMmap:
     ):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
+        if len(strings) == 0:
+            return cls(out_dir, mode=mode, starts_key=starts_key, ends_key=ends_key)
         bytes_slices = _sequence_of_strings_to_bytes(strings, verbose=verbose)
         with open(out_dir / "data.ninja", "wb") as f:
             f.write(bytes_slices.buffer)

@@ -103,3 +103,13 @@ def test_read_only(tmp_path):
     memmap = StringsMmap(out_dir=out_path, mode='rb')
     for i, string in enumerate(list_of_strings):
         assert string == memmap[i]
+
+
+def test_empty_strings_mmap(tmp_path):
+    out_path = tmp_path / 'empty_strings_mmap'
+    strings_mmap = StringsMmap.from_strings(out_dir=out_path, strings=[])
+    assert len(strings_mmap) == 0
+    strings_mmap.append("icak")
+    assert len(strings_mmap) == 1
+    assert strings_mmap[0] == "icak"
+
