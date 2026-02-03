@@ -45,7 +45,9 @@ class StringsMmap:
 
     def __getitem__(self, item):
         if self.starts is None:
-            raise IndexError(f"StringsMmap is empty!")
+            if np.isscalar(item):
+                raise IndexError(f"StringsMmap is empty!")
+            return []
         if np.isscalar(item):
             return self.get_single(item)
         return self.get_multiple(item)

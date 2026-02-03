@@ -109,6 +109,7 @@ def test_empty_strings_mmap(tmp_path):
     out_path = tmp_path / 'empty_strings_mmap'
     strings_mmap = StringsMmap.from_strings(out_dir=out_path, strings=[])
     assert len(strings_mmap) == 0
+    assert [] == strings_mmap[:]
     strings_mmap.append("icak")
     assert len(strings_mmap) == 1
     assert strings_mmap[0] == "icak"
