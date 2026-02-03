@@ -1,4 +1,4 @@
-__version__ = "0.7.5"
+__version__ = "0.8.1"
 
 from .base import Wrapped
 from .numpy import (
