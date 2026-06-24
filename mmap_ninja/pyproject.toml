@@ -33,3 +33,4 @@ Homepage = "https://github.com/hristo-vrigazov/mmap.ninja"
 [project.optional-dependencies]
 dev = ["pytest", "tqdm", "pytest-dotenv"]
 parallel = ["joblib"]
+zstd = ["zstandard"]

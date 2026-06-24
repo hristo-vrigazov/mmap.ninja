@@ -1,11 +1,26 @@
 import mmap
 from pathlib import Path
-from typing import Sequence, Union
+from typing import Optional, Sequence, Union
 
 import numpy as np
 
 from mmap_ninja import base, numpy
-from mmap_ninja.base import _bytes_to_str, _str_to_bytes, _sequence_of_strings_to_bytes
+from mmap_ninja.base import _bytes_to_str, _str_to_bytes, _sequence_of_strings_to_bytes, BytesSlices
+
+
+def _compress_strings_to_bytes(strings: Sequence[str], compressor, verbose=False) -> BytesSlices:
+    buffer = bytearray()
+    starts = []
+    ends = []
+    if verbose:
+        from tqdm import tqdm
+        strings = tqdm(strings)
+    for string in strings:
+        compressed = compressor.compress(_str_to_bytes(string))
+        starts.append(len(buffer))
+        ends.append(len(buffer) + len(compressed))
+        buffer.extend(compressed)
+    return BytesSlices(bytes(buffer), starts, ends)
 
 
 class StringsMmap:
@@ -30,6 +45,8 @@ class StringsMmap:
         self.range = None
         self.file = None
         self.buffer = None
+        self.compressor = None
+        self.decompressor = None
 
         if (self.out_dir / self.starts_key / "dtype.ninja").exists():
             self._reload_fields()
@@ -41,7 +58,10 @@ class StringsMmap:
     def get_single(self, item):
         start = self.starts[item]
         end = self.ends[item]
-        return _bytes_to_str(self.buffer[start:end])
+        raw = bytes(self.buffer[start:end])
+        if self.decompressor is not None:
+            raw = self.decompressor.decompress(raw)
+        return _bytes_to_str(raw)
 
     def __getitem__(self, item):
         if self.starts is None:
@@ -68,6 +88,8 @@ class StringsMmap:
             self.set_single(idx, new_value)
 
     def set_single(self, idx, new_value):
+        if self.compressor is not None:
+            raise ValueError("In-place modification is not supported for compressed StringsMmap.")
         start = self.starts[idx]
         end = self.ends[idx]
         self.buffer[start:end] = _str_to_bytes(new_value)
@@ -81,7 +103,10 @@ class StringsMmap:
             StringsMmap.from_strings(self.out_dir, list_of_strings, verbose=verbose)
             self._reload_fields()
             return
-        bytes_slices = _sequence_of_strings_to_bytes(list_of_strings, verbose=verbose)
+        if self.compressor is not None:
+            bytes_slices = _compress_strings_to_bytes(list_of_strings, self.compressor, verbose=verbose)
+        else:
+            bytes_slices = _sequence_of_strings_to_bytes(list_of_strings, verbose=verbose)
         end = self.ends[-1]
         start_offsets = end + bytes_slices.starts
         end_offsets = end + bytes_slices.ends
@@ -102,6 +127,21 @@ class StringsMmap:
         access = mmap.ACCESS_READ if self.mode == 'rb' else mmap.ACCESS_DEFAULT
         self.buffer = mmap.mmap(self.file.fileno(), 0, access=access)
 
+        zstd_level_file = self.out_dir / "zstd_level.ninja"
+        if zstd_level_file.exists():
+            import zstandard
+            level = int(base._file_to_str(zstd_level_file))
+            zstd_dict = None
+            zstd_dict_file = self.out_dir / "zstd_dict.ninja"
+            if zstd_dict_file.exists():
+                with open(zstd_dict_file, "rb") as f:
+                    zstd_dict = zstandard.ZstdCompressionDict(f.read())
+            self.compressor = zstandard.ZstdCompressor(level=level, dict_data=zstd_dict)
+            self.decompressor = zstandard.ZstdDecompressor(dict_data=zstd_dict)
+        else:
+            self.compressor = None
+            self.decompressor = None
+
     def append(self, string: str):
         self.extend([string])
 
@@ -118,12 +158,38 @@ class StringsMmap:
         starts_key="starts",
         ends_key="ends",
         verbose=False,
+        zstd_level: Optional[int] = None,
+        zstd_train_dictionary_size: Optional[int] = None,
     ):
         out_dir = Path(out_dir)
         out_dir.mkdir(exist_ok=True)
         if len(strings) == 0:
             return cls(out_dir, mode=mode, starts_key=starts_key, ends_key=ends_key)
-        bytes_slices = _sequence_of_strings_to_bytes(strings, verbose=verbose)
+        if zstd_level is not None:
+            import zstandard
+            raw_bytes_list = [_str_to_bytes(s) for s in strings]
+            zstd_dict = None
+            if zstd_train_dictionary_size is not None:
+                zstd_dict = zstandard.train_dictionary(zstd_train_dictionary_size, raw_bytes_list)
+                with open(out_dir / "zstd_dict.ninja", "wb") as f:
+                    f.write(zstd_dict.as_bytes())
+            base._str_to_file(str(zstd_level), out_dir / "zstd_level.ninja")
+            compressor = zstandard.ZstdCompressor(level=zstd_level, dict_data=zstd_dict)
+            iterable = raw_bytes_list
+            if verbose:
+                from tqdm import tqdm
+                iterable = tqdm(iterable)
+            buf = bytearray()
+            starts = []
+            ends = []
+            for raw in iterable:
+                compressed = compressor.compress(raw)
+                starts.append(len(buf))
+                ends.append(len(buf) + len(compressed))
+                buf.extend(compressed)
+            bytes_slices = BytesSlices(bytes(buf), starts, ends)
+        else:
+            bytes_slices = _sequence_of_strings_to_bytes(strings, verbose=verbose)
         with open(out_dir / "data.ninja", "wb") as f:
             f.write(bytes_slices.buffer)
         base._str_to_file("string", out_dir / "type.ninja")

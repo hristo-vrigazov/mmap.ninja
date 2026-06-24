@@ -114,3 +114,45 @@ def test_empty_strings_mmap(tmp_path):
     assert len(strings_mmap) == 1
     assert strings_mmap[0] == "icak"
 
+
+@pytest.mark.parametrize("zstd_train_dictionary_size", [None, 256])
+def test_zstd_compression(tmp_path, zstd_train_dictionary_size):
+    base_strings = ["Torba", "Boiler", "a", "zele pitka", "x", "popo"]
+    list_of_strings = [f"{s} sample {i}".ljust(100) for i in range(20) for s in base_strings]
+    out_path = tmp_path / "zstd_strings"
+    memmap = StringsMmap.from_strings(
+        out_path,
+        list_of_strings,
+        zstd_level=3,
+        zstd_train_dictionary_size=zstd_train_dictionary_size,
+    )
+    assert memmap[:] == list_of_strings
+
+
+def test_zstd_reload(tmp_path):
+    list_of_strings = ["Torba", "Boiler", "a", "zele pitka", "", "popo"]
+    out_path = tmp_path / "zstd_reload"
+    StringsMmap.from_strings(out_path, list_of_strings, zstd_level=3)
+    memmap = StringsMmap(out_path)
+    for i, s in enumerate(list_of_strings):
+        assert memmap[i] == s
+
+
+def test_zstd_extend(tmp_path):
+    list_of_strings = ["Torba", "Boiler", "a", "zele pitka", "", "popo"]
+    out_path = tmp_path / "zstd_extend"
+    memmap = StringsMmap.from_strings(out_path, list_of_strings, zstd_level=3)
+    memmap.extend(["new", "new2"])
+    assert len(memmap) == 8
+    assert memmap[-1] == "new2"
+    assert memmap[-2] == "new"
+    for i, s in enumerate(list_of_strings):
+        assert memmap[i] == s
+
+
+def test_zstd_set_raises(tmp_path):
+    out_path = tmp_path / "zstd_set"
+    memmap = StringsMmap.from_strings(out_path, ["hello", "world"], zstd_level=3)
+    with pytest.raises(ValueError):
+        memmap[0] = "other"
+
